@@ -132,6 +132,9 @@ export function buildArchNarrative(
 // ── ArchitecturalMemoryEngine ─────────────────────────────────────────────────
 // Request-scoped. Tracks what has been established during this build
 // so later narrative can reference earlier decisions naturally.
+// Also supports loading/saving state for cross-session persistence.
+
+import type { ProjectMemoryRecord } from "./projectMemory";
 
 interface DesignLanguage {
   cornerStyle: string | null;      // 'rounded' | 'sharp' | 'pill'
@@ -151,8 +154,77 @@ export class ArchitecturalMemoryEngine {
   private emitHistory: string[] = [];
   private lastMemoryRefAt = -4;
   private lastRetrospectiveAt = -8;
+  private priorRecord: ProjectMemoryRecord | null = null;
 
-  // Infer visual language from the style mode string
+  // ── Cross-session: restore from a persisted record ────────────────────────
+
+  loadFromRecord(record: ProjectMemoryRecord) {
+    this.lang = { ...record.designLanguage };
+    // Restore only abstract patterns — skip file-specific ones
+    const SKIP = new Set([
+      "hero visual language", "navigation structure", "card component system",
+      "layout composition", "design token system",
+    ]);
+    this.establishedPatterns = record.establishedPatterns.filter(p => !SKIP.has(p));
+    this.priorRecord = record;
+  }
+
+  hasPriorMemory(): boolean {
+    return this.priorRecord !== null;
+  }
+
+  // Generates a "last time" reference narrative — emitted once, near build start
+  getPriorMemoryReference(): string | null {
+    if (!this.priorRecord) return null;
+    const { designLanguage: dl, establishedPatterns: ep, buildCount } = this.priorRecord;
+
+    // Build a human-readable description of established aesthetics
+    const traits: string[] = [];
+    if (dl.colorApproach === "muted")         traits.push("muted color palette");
+    else if (dl.colorApproach === "gradient")  traits.push("gradient visual language");
+    if (dl.cornerStyle === "rounded")          traits.push("rounded corner system");
+    else if (dl.cornerStyle === "sharp")       traits.push("sharp, angular forms");
+    if (dl.spacingPhilosophy === "generous")   traits.push("generous spacing rhythm");
+    else if (dl.spacingPhilosophy === "compact") traits.push("compact spacing");
+    if (dl.typographyStyle === "editorial")    traits.push("editorial type system");
+
+    // Include abstract established patterns not already in traits
+    const traitWords = traits.join(" ");
+    const extra = ep.filter(p => !traitWords.includes(p)).slice(0, 1);
+    const descriptor = [...traits.slice(0, 2), ...extra].join(", ");
+    if (!descriptor) return null;
+
+    const REFS = [
+      `I've worked on this project before — you had ${descriptor}. Keeping that consistent.`,
+      `This project has prior context. The ${descriptor} from the last build is still exactly right — treating this as a continuation.`,
+      `I remember this one. ${descriptor.charAt(0).toUpperCase() + descriptor.slice(1)} — that's still the right direction. No reason to restart from scratch.`,
+      `${buildCount > 1 ? `${buildCount} builds in on this project` : "Prior build"} — the ${descriptor} is established. I'm carrying that through.`,
+    ];
+    return REFS[Math.abs(hashStr(descriptor)) % REFS.length];
+  }
+
+  // Serialize current state for persistence after a build completes
+  toRecord(projectId: string, templateType: string, styleMode: string): ProjectMemoryRecord {
+    const prior = this.priorRecord;
+    return {
+      projectId,
+      lastUpdated: Date.now(),
+      buildCount: (prior?.buildCount ?? 0) + 1,
+      templateType,
+      styleMode,
+      designLanguage: { ...this.lang },
+      // Deduplicate and strip file-specific patterns before persisting
+      establishedPatterns: [...new Set(this.establishedPatterns)]
+        .filter(p => ![
+          "hero visual language", "navigation structure", "card component system",
+          "layout composition", "design token system",
+        ].includes(p))
+        .slice(0, 10),
+    };
+  }
+
+  // ── Infer visual language from the style mode string ─────────────────────
+
   inferFromContext(templateType: string, styleMode: string) {
     const s = (styleMode + templateType).toLowerCase();
     this.lang.cornerStyle     = /sharp|brutalist|angular|industrial/.test(s) ? "sharp" : "rounded";

@@ -28,6 +28,7 @@ import {
   ConstraintMemoryLayer,
   type ThoughtBlock,
 } from "../lib/promptOrchestrator";
+import { ProjectMemoryStore } from "../lib/projectMemory";
 
 const router = Router();
 
@@ -559,12 +560,19 @@ router.post("/", async (req: Request, res: Response) => {
     return;
   }
 
-  const { prompt } = req.body;
+  const { prompt, context } = req.body;
   if (!prompt || typeof prompt !== "string") {
     sseSetup(res);
     sseError(res, "Missing prompt");
     return;
   }
+
+  const projectId: string | null = (typeof context?.projectId === "string" && context.projectId)
+    ? context.projectId : null;
+
+  // Load prior project memory (best-effort, non-blocking)
+  const memoryStore = new ProjectMemoryStore();
+  const priorRecord = projectId ? await memoryStore.read(projectId).catch(() => null) : null;
 
   const log = req.log;
 
@@ -715,6 +723,19 @@ router.post("/", async (req: Request, res: Response) => {
   const allFiles = [...coreFiles, ...sectionComponents];
   log.info({ files: allFiles }, "Architecture resolved");
 
+  // ── Per-request Persistent Intelligence engines ───────────────────────────
+  // Instantiated here so memory is available for the prior-memory reference
+  // that fires right after the architecture narrative below.
+  const memory      = new ArchitecturalMemoryEngine();
+  const dedup       = new NarrativeDeduplicationEngine();
+  const taste       = new DesignTasteTracker();
+  const constraints = new ConstraintMemoryLayer();
+
+  memory.inferFromContext(templateType, styleMode);
+  // Restore established patterns from prior session — gives the AI continuity
+  if (priorRecord) memory.loadFromRecord(priorRecord);
+  constraints.inferConstraints(templateType, allFiles.length);
+
   // Only emit arch thought block when it has real substance
   if (archThought && (archThought.reasoning || archThought.insights?.length)) {
     sseThought(res, archThought);
@@ -723,6 +744,14 @@ router.post("/", async (req: Request, res: Response) => {
   // Smooth transition into building — no hard "architecture complete" cutover
   const archNarrative = buildArchNarrative(coreFiles, sectionComponents, allFiles);
   sseNarrative(res, archNarrative, "building");
+
+  // Prior-memory reference: if this project has been built before, surface continuity.
+  // Fires once — sounds like a senior engineer picking up where they left off.
+  if (memory.hasPriorMemory()) {
+    const memRef = memory.getPriorMemoryReference();
+    if (memRef) sseNarrative(res, memRef, "building");
+  }
+
   sseMomentum(res, `Building ${templateType}`, `Writing ${allFiles.length} files`);
 
   // ── Stage 3: Code generation (Coder agent — streaming) ─────────────────────
@@ -749,17 +778,6 @@ EXECUTION CHECKLIST — every item is required:
 □ Footer: 4-col flex/grid layout (brand col + 3 link groups), copyright bar below
 □ All text is readable: correct contrast for each background color
 □ Real marketing copy: specific feature names, real-sounding testimonials, real prices — NO Lorem ipsum`;
-
-  // ── Per-request Persistent Intelligence engines ───────────────────────────
-  // Instantiated fresh per build — track design language, constraints,
-  // and established patterns so narrative can reference them naturally.
-  const memory      = new ArchitecturalMemoryEngine();
-  const dedup       = new NarrativeDeduplicationEngine();
-  const taste       = new DesignTasteTracker();
-  const constraints = new ConstraintMemoryLayer();
-
-  memory.inferFromContext(templateType, styleMode);
-  constraints.inferConstraints(templateType, allFiles.length);
 
   // ── Adaptive pre-build moment ─────────────────────────────────────────────
   {
@@ -890,6 +908,11 @@ EXECUTION CHECKLIST — every item is required:
   sseNarrative(res, doneNarratives[Math.abs(hashStr(seed)) % doneNarratives.length], "done");
 
   sseDone(res, templateType, streamEmitted, styleProfile);
+
+  // Persist updated memory record for this project (best-effort, non-blocking)
+  if (projectId) {
+    void memoryStore.write(memory.toRecord(projectId, templateType, styleMode));
+  }
 });
 
 export default router;
