@@ -1,6 +1,6 @@
-// PromptOrchestrator — humanized narrative layer.
-// Everything here is designed to feel like a senior engineer thinking out loud,
-// NOT a system exposing its own architecture.
+// PromptOrchestrator — humanized + adaptive narrative layer.
+// Designed to feel like a senior engineer thinking out loud,
+// adapting priorities, noticing drift, and self-correcting.
 
 export interface ThoughtBlock {
   title: string;
@@ -18,7 +18,7 @@ export interface OrchestratedPlan {
   architecturalThought?: ThoughtBlock;
 }
 
-// ── Prompt rewriting ──────────────────────────────────────────────────────────
+// ── Prompt builders ───────────────────────────────────────────────────────────
 
 export function buildPlannerSystemPrompt(): string {
   return `You are a senior engineer thinking through a build before touching any code.
@@ -72,13 +72,12 @@ Components go under /src/components/ as .jsx files.
 No markdown. No <think> tags. Output only JSON.`;
 }
 
-// ── Cadence config ────────────────────────────────────────────────────────────
-// Controls narrative rhythm per execution stage.
+// ── CadenceConfig ─────────────────────────────────────────────────────────────
 
 export interface CadenceConfig {
-  minDelay: number;   // ms before emitting narrative
-  burstSize: number;  // how many operations before a pause
-  pauseMs: number;    // pause between bursts
+  minDelay: number;
+  burstSize: number;
+  pauseMs: number;
 }
 
 export const CADENCE: Record<string, CadenceConfig> = {
@@ -89,48 +88,36 @@ export const CADENCE: Record<string, CadenceConfig> = {
   finalizing:   { minDelay: 200,  burstSize: 3, pauseMs: 100  },
 };
 
-// ── Dependency-aware narrative helpers ────────────────────────────────────────
+// ── Dependency-aware narrative ────────────────────────────────────────────────
 
-// Multiple variants of planning narratives — picked based on step content
 const PLAN_OPENERS = [
-  (first: string) => `I want to get the ${first} locked in before anything else — the rest of the layout depends on that foundation.`,
-  (first: string) => `Starting with ${first} because that decision propagates everywhere downstream.`,
-  (first: string) => `The ${first} needs to come first — once that's stable, the remaining components slot in cleanly.`,
-  (first: string) => `I'm prioritizing ${first} up front since changing it later means touching multiple layers.`,
+  (f: string) => `I want to get the ${f} locked in before anything else — the rest of the layout depends on that foundation.`,
+  (f: string) => `Starting with ${f} because that decision propagates everywhere downstream.`,
+  (f: string) => `The ${f} needs to come first — once that's stable, the remaining components slot in cleanly.`,
+  (f: string) => `I'm prioritizing ${f} up front since changing it later means touching multiple layers.`,
 ];
 
 const PLAN_CONTINUATIONS = [
-  (rest: string[]) => `Then I'll move through ${rest.slice(0, -1).join(", ")}, finishing with ${rest[rest.length - 1]}. Each stage builds on the one before.`,
-  (rest: string[]) => `After that: ${rest.join(" → ")}. The sequencing matters here — I don't want to wire things together before the structure is stable.`,
-  (rest: string[]) => `From there I'll work through ${rest.slice(0, -1).join(", ")} — wrapping up with ${rest[rest.length - 1]} once the shape is clear.`,
+  (r: string[]) => `Then I'll move through ${r.slice(0, -1).join(", ")}, finishing with ${r[r.length - 1]}. Each stage builds on the one before.`,
+  (r: string[]) => `After that: ${r.join(" → ")}. The sequencing matters here — I don't want to wire things together before the structure is stable.`,
+  (r: string[]) => `From there I'll work through ${r.slice(0, -1).join(", ")} — wrapping up with ${r[r.length - 1]} once the shape is clear.`,
 ];
 
 export function buildNarrativeFromSteps(steps: string[]): string {
   if (!steps.length) return "Working through the shape of this before committing to anything.";
-
   const clean = (s: string) =>
     s.replace(/^(step \d+:?\s*|first[,:]?\s*|then[,:]?\s*)/i, "")
      .replace(/^\w/, c => c.toLowerCase())
      .replace(/\.$/, "");
-
   const first = clean(steps[0]);
   const rest  = steps.slice(1).map(clean);
-
   if (rest.length === 0) return `${first} — that's the core of it.`;
-
   const openerIdx = Math.abs(hashStr(first)) % PLAN_OPENERS.length;
   const contIdx   = Math.abs(hashStr(rest.join())) % PLAN_CONTINUATIONS.length;
-
   const opener = PLAN_OPENERS[openerIdx](first);
-  if (rest.length === 1) {
-    return `${opener} Once that's solid, I'll ${rest[0]}.`;
-  }
-
-  const continuation = PLAN_CONTINUATIONS[contIdx](rest);
-  return `${opener} ${continuation}`;
+  if (rest.length === 1) return `${opener} Once that's solid, I'll ${rest[0]}.`;
+  return `${opener} ${PLAN_CONTINUATIONS[contIdx](rest)}`;
 }
-
-// ── Architecture narrative — smooth transition from planning ──────────────────
 
 export function buildArchNarrative(
   coreFiles: string[],
@@ -140,31 +127,118 @@ export function buildArchNarrative(
   const compNames = sectionComponents
     .map(f => f.split("/").pop()!.replace(".jsx", ""))
     .filter(Boolean);
-
   const total = allFiles.length;
-
   if (compNames.length === 0) {
     return `Working across ${total} files. I'll establish the root structure first, then wire each section into it.`;
   }
-
   const anchor = compNames[0];
   const remaining = compNames.slice(1);
-
   const VARIANTS = [
     () => `${total} files total. I'll lock in ${anchor} first — that sets the visual language everything else inherits. ${remaining.length > 0 ? `Then I'll move through ${remaining.join(", ")}, letting each section build on what came before.` : "Starting the build now."}`,
     () => `Spanning ${total} files. ${anchor} comes first because the spacing and type scale it establishes flows into every component below it. ${remaining.length > 0 ? `After that: ${remaining.join(", ")}.` : ""}`,
     () => `Working across ${total} files — starting with ${anchor} since the remaining sections depend on the layout structure it defines. ${remaining.length > 0 ? `${remaining.join(", ")} follow from there.` : ""} Starting the build.`,
   ];
-
-  const idx = Math.abs(hashStr(anchor)) % VARIANTS.length;
-  return VARIANTS[idx]();
+  return VARIANTS[Math.abs(hashStr(anchor)) % VARIANTS.length]();
 }
 
-// ── Micro-discovery messages ──────────────────────────────────────────────────
-// Emitted occasionally during building — creates emergent intelligence feeling.
+// ── Adaptive Autonomy narratives ──────────────────────────────────────────────
+// All strings are written to feel discovered, not scripted.
 
+// Reprioritization — the AI decides to change execution order
+const REPRIORITIZATION = [
+  "I'm restructuring the layout system first — the remaining sections depend on it being stable.",
+  "The state flow is becoming coupled, so I'm simplifying that before wiring the API layer.",
+  "I'm consolidating these components now to avoid duplication further down.",
+  "The spacing system needs to land before the card components — otherwise I'm overriding twice.",
+  "Shifting order slightly — the animation layer depends on the layout being settled first.",
+  "I'm pulling the shared styles together now rather than threading them through each component.",
+];
+
+export function getReprioritization(seed: string): string {
+  return REPRIORITIZATION[Math.abs(hashStr(seed + "repri")) % REPRIORITIZATION.length];
+}
+
+// Drift detection — AI notices the current path is becoming inefficient
+const DRIFT_DETECTION = [
+  "The component structure is creating more duplication than expected — consolidating before continuing.",
+  "The dashboard grid is getting harder to maintain responsively. Simplifying the layout system now.",
+  "There's more coupling here than the initial plan anticipated — restructuring to keep things clean.",
+  "The spacing is drifting from the token system. Normalizing before going further.",
+  "The animation layer is conflicting with the sticky positioning. Sorting that out now.",
+  "A pattern is repeating across components that should be extracted. Doing that now.",
+];
+
+export function getDriftDetection(seed: string): string {
+  return DRIFT_DETECTION[Math.abs(hashStr(seed + "drift")) % DRIFT_DETECTION.length];
+}
+
+// Self-correction — the AI catches itself and changes approach
+const SELF_CORRECTIONS = [
+  "Actually — there's a cleaner way to structure this. Revising.",
+  "I'm changing approach slightly here. The earlier pattern becomes harder to maintain at this scale.",
+  "This interaction layer is more coupled than I planned. Restructuring it now.",
+  "I noticed a better split for this. Adjusting the component boundary before going deeper.",
+  "The current approach works, but a simpler one is right there. Taking that instead.",
+];
+
+export function getSelfCorrection(seed: string): string {
+  return SELF_CORRECTIONS[Math.abs(hashStr(seed + "self")) % SELF_CORRECTIONS.length];
+}
+
+// Task compression — summarizing repetitive work
+const COMPRESSIONS = [
+  (what: string) => `Applying the same ${what} pattern across the remaining sections now.`,
+  (what: string) => `The shared ${what} structure is propagating cleanly through the build.`,
+  (what: string) => `${what} is consistent now — carrying that through the remaining components.`,
+  (what: string) => `Continuing with the same ${what} approach. Nothing novel here, just steady work.`,
+];
+
+export function getCompression(what: string): string {
+  const idx = Math.abs(hashStr(what + "compress")) % COMPRESSIONS.length;
+  return COMPRESSIONS[idx](what);
+}
+
+// Multi-thread cognition — awareness of parallel concerns
+const MULTI_THREAD = [
+  "While the rebuild settles, I'm cleaning up the interaction layer.",
+  "The component structure is stable — I'm reviewing responsiveness at the same time.",
+  "I'm keeping the animation system lightweight while wiring the state flow.",
+  "While that lands, I'm making sure the mobile layout doesn't drift from the desktop spec.",
+  "The layout is holding — simultaneously tidying the type hierarchy.",
+];
+
+export function getMultiThread(seed: string): string {
+  return MULTI_THREAD[Math.abs(hashStr(seed + "mt")) % MULTI_THREAD.length];
+}
+
+// Strategic summaries — checkpoint narration
+const STRATEGIC_SUMMARIES = [
+  (stage: string) => `The ${stage} foundation is stable now — layout, spacing, and structure are aligned. Moving deeper.`,
+  (stage: string) => `${stage} is behaving consistently. Connecting the remaining UI states now.`,
+  (stage: string) => `Good — the ${stage} system is clean. I'm wiring the remaining sections into it.`,
+  (stage: string) => `The ${stage} work is solid. What's left is mostly execution — no structural unknowns.`,
+];
+
+export function getStrategicSummary(stage: string): string {
+  const idx = Math.abs(hashStr(stage + "summary")) % STRATEGIC_SUMMARIES.length;
+  return STRATEGIC_SUMMARIES[idx](stage);
+}
+
+// Plan evolution — AI acknowledges plan has evolved
+const PLAN_EVOLUTIONS = [
+  "I adjusted the original sequence slightly — this flow will make the layout easier to extend later.",
+  "I'm combining these two systems since they overlap heavily. The result is cleaner.",
+  "The plan evolved a bit mid-build — what I've got is simpler than the original breakdown.",
+  "I collapsed a couple of steps — they shared the same state boundary, so it made sense.",
+];
+
+export function getPlanEvolution(seed: string): string {
+  return PLAN_EVOLUTIONS[Math.abs(hashStr(seed + "evolve")) % PLAN_EVOLUTIONS.length];
+}
+
+// Micro-discoveries — occasional emergent intelligence moments
 const MICRO_DISCOVERIES = [
-  "The component structure is slightly more coupled than I expected — restructuring the state flow to stay clean.",
+  "The component structure is slightly more coupled than expected — restructuring the state flow to stay clean.",
   "Noticed the mobile spacing becomes inconsistent below the md breakpoint, fixing that now.",
   "Found a cleaner way to handle the animation timing across sections.",
   "The current prop pattern would create duplication later — consolidating it while I still can.",
@@ -175,13 +249,10 @@ const MICRO_DISCOVERIES = [
 ];
 
 export function getMicroDiscovery(seed: string): string {
-  const idx = Math.abs(hashStr(seed)) % MICRO_DISCOVERIES.length;
-  return MICRO_DISCOVERIES[idx];
+  return MICRO_DISCOVERIES[Math.abs(hashStr(seed + "micro")) % MICRO_DISCOVERIES.length];
 }
 
-// ── Background cognition messages ─────────────────────────────────────────────
-// Brief messages that imply parallel awareness while building.
-
+// Background cognition — brief parallel awareness messages
 const BACKGROUND_COGNITION = [
   "While that compiles, I'm tidying up the component boundaries.",
   "The animation system is staying lightweight — keeping it clean as I add interactions.",
@@ -190,13 +261,10 @@ const BACKGROUND_COGNITION = [
 ];
 
 export function getBackgroundCognition(seed: string): string {
-  const idx = Math.abs(hashStr(seed + "bg")) % BACKGROUND_COGNITION.length;
-  return BACKGROUND_COGNITION[idx];
+  return BACKGROUND_COGNITION[Math.abs(hashStr(seed + "bg")) % BACKGROUND_COGNITION.length];
 }
 
 // ── Fallback thought blocks ───────────────────────────────────────────────────
-// Used when the LLM fails to return structured thoughts.
-// These should feel like genuine engineering insight, not system placeholders.
 
 export function fallbackPlanningThought(templateType: string, steps: string[]): ThoughtBlock {
   return {
@@ -234,7 +302,7 @@ export function fallbackArchThought(sectionComponents: string[]): ThoughtBlock {
 
 // ── Utilities ─────────────────────────────────────────────────────────────────
 
-function hashStr(s: string): number {
+export function hashStr(s: string): number {
   let h = 0;
   for (let i = 0; i < s.length; i++) {
     h = (Math.imul(31, h) + s.charCodeAt(i)) | 0;

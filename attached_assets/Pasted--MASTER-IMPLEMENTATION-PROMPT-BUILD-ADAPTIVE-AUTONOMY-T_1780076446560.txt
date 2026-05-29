@@ -1,0 +1,402 @@
+# MASTER IMPLEMENTATION PROMPT — BUILD ADAPTIVE AUTONOMY
+
+The orchestration flow is now significantly better.
+
+The AI finally feels:
+
+* collaborative
+* thoughtful
+* continuous
+* naturally paced
+* behaviorally realistic
+
+BUT the execution flow still risks feeling:
+too linear.
+
+Right now the AI mostly behaves like:
+a well-narrated sequential executor.
+
+The next phase is:
+ADAPTIVE AUTONOMY.
+
+The AI must begin feeling:
+self-directed.
+
+Not just:
+pre-scripted.
+
+---
+
+# CORE GOAL
+
+The AI should feel capable of:
+
+* changing priorities
+* revising plans
+* discovering implementation drift
+* restructuring execution order
+* creating subgoals dynamically
+* compressing repetitive work
+* adapting cognitive bandwidth
+* self-correcting mid-execution
+
+WITHOUT explicit user instruction.
+
+This is one of the biggest psychological differences between:
+“AI assistant”
+and
+“autonomous AI collaborator.”
+
+---
+
+# IMPLEMENT RUNTIME REPRIORITIZATION
+
+Create:
+AdaptiveExecutionEngine
+
+The AI should continuously evaluate:
+
+* current progress
+* dependency stability
+* implementation blockers
+* architecture cleanliness
+* execution efficiency
+
+The AI should occasionally decide:
+to change implementation order dynamically.
+
+Examples:
+
+* “I’m restructuring the layout system first because the remaining sections depend on it.”
+* “The current state flow is becoming too coupled, so I’m simplifying that before wiring the API layer.”
+* “I’m consolidating these components now to avoid duplication later.”
+
+These moments create:
+autonomous intelligence feeling.
+
+IMPORTANT:
+These decisions should feel:
+occasional and justified.
+
+NOT random.
+
+---
+
+# IMPLEMENT IMPLEMENTATION DRIFT DETECTION
+
+The AI should detect:
+when the current implementation path is becoming inefficient.
+
+Examples:
+
+* duplicated logic
+* unstable component structure
+* excessive coupling
+* inconsistent spacing systems
+* growing complexity
+* animation conflicts
+* repeated patterns
+
+When detected:
+the AI should:
+
+* acknowledge the issue
+* adapt strategy
+* revise the plan naturally
+
+Example:
+
+* “The current component structure is creating duplication, so I’m consolidating this before continuing.”
+* “The dashboard grid is becoming harder to maintain responsively, simplifying that now.”
+
+This creates:
+self-correcting intelligence.
+
+---
+
+# BUILD DYNAMIC SUBGOAL GENERATION
+
+Current issue:
+execution is still too top-down.
+
+The AI should create:
+micro-objectives dynamically during work.
+
+Examples:
+
+* stabilizing layout
+* consolidating state
+* extracting shared styles
+* simplifying animations
+* reducing prop complexity
+* normalizing spacing systems
+
+The AI should naturally generate:
+new subtasks while building.
+
+This creates:
+emergent execution realism.
+
+---
+
+# IMPLEMENT COGNITIVE BANDWIDTH ALLOCATION
+
+Not every task deserves equal narration depth.
+
+Create:
+CognitiveBandwidthManager
+
+The AI should dynamically allocate:
+
+* thought visibility
+* narrative density
+* pacing
+* reflection depth
+* operation exposure
+
+based on:
+
+* task complexity
+* uncertainty
+* debugging intensity
+* architectural impact
+* repetitive operations
+
+Examples:
+
+Complex debugging:
+
+* more visible thinking
+* slower cadence
+* reflective narration
+
+Simple repetitive file generation:
+
+* compressed updates
+* quieter operation flow
+
+Major architecture shifts:
+
+* deeper thought blocks
+* more dependency narration
+
+This creates:
+natural intelligence scaling.
+
+---
+
+# IMPLEMENT SILENT EXECUTION WINDOWS
+
+One of the biggest missing realism layers:
+RESTRAINT.
+
+The AI currently likely narrates too frequently.
+
+Real engineers:
+sometimes work silently.
+
+Implement:
+SilentExecutionWindows
+
+The AI should occasionally:
+
+* stop narrating briefly
+* continue executing silently
+* return later with meaningful progress
+
+Example:
+Instead of:
+constant micro-updates.
+
+Use:
+
+* short quiet execution bursts
+* followed by:
+  “Good — the layout system is stable now. I’m wiring the remaining sections into it.”
+
+This dramatically increases realism.
+
+IMPORTANT:
+Silence should feel:
+intentional.
+
+NOT stalled.
+
+Use subtle liveness continuity during silence.
+
+---
+
+# IMPLEMENT PLAN EVOLUTION
+
+The AI should stop treating plans as:
+fixed sequences.
+
+Plans should evolve dynamically.
+
+Examples:
+
+* revising execution order
+* collapsing redundant steps
+* combining tasks
+* splitting complex tasks
+* postponing unstable areas
+
+The AI should occasionally acknowledge:
+that the implementation evolved.
+
+Example:
+
+* “I adjusted the original structure slightly — this flow will make the dashboard easier to extend later.”
+* “I’m combining these two systems now since they overlap heavily.”
+
+This creates:
+adaptive cognition feeling.
+
+---
+
+# BUILD SELF-CORRECTION MOMENTS
+
+The AI should occasionally:
+catch itself.
+
+Examples:
+
+* “Actually, there’s a cleaner way to structure this.”
+* “I’m changing approach slightly — the earlier structure becomes harder to maintain.”
+* “This interaction layer is more coupled than expected, restructuring it now.”
+
+These moments are EXTREMELY powerful psychologically.
+
+They imply:
+
+* awareness
+* adaptation
+* runtime reasoning
+* self-monitoring
+
+IMPORTANT:
+Use sparingly.
+
+---
+
+# IMPLEMENT TASK COMPRESSION
+
+Current issue:
+the AI may over-narrate repetitive work.
+
+Implement:
+OperationCompression
+
+When performing:
+
+* repetitive file edits
+* repeated component creation
+* boilerplate work
+* batch operations
+
+The AI should summarize naturally.
+
+Example:
+
+* “I’m applying the same spacing system across the remaining sections now.”
+* “The shared animation structure is propagating cleanly through the dashboard.”
+
+This creates:
+execution maturity.
+
+---
+
+# IMPLEMENT MULTI-THREAD COGNITION
+
+The AI should feel aware of:
+parallel concerns.
+
+Examples:
+
+* “While the rebuild finishes, I’m cleaning up the interaction layer.”
+* “The component structure is stable now, so I’m reviewing responsiveness at the same time.”
+* “I’m keeping the animation system lightweight while wiring the state flow.”
+
+This creates:
+advanced agentic feeling.
+
+---
+
+# IMPORTANT:
+
+# REDUCE “SCRIPTED AI” FEELING
+
+The AI should NOT:
+constantly narrate in the same pattern.
+
+Avoid:
+
+* predictable cadence
+* repeated phrasing
+* identical transition structures
+* formulaic discoveries
+
+The AI should feel:
+adaptive and situational.
+
+---
+
+# IMPLEMENT STRATEGIC SUMMARIZATION
+
+At natural checkpoints:
+the AI should summarize progress intelligently.
+
+NOT generic summaries.
+
+Examples:
+
+* “The dashboard foundation is stable now — layout, spacing, and navigation are aligned. I’m moving deeper into the data layer.”
+* “The interaction system is behaving consistently now, so I’m connecting the remaining UI states.”
+
+This creates:
+momentum continuity.
+
+---
+
+# THOUGHT BLOCK EVOLUTION
+
+Thought blocks should now represent:
+REAL strategic shifts.
+
+Examples:
+
+* architecture restructuring
+* debugging discoveries
+* execution reprioritization
+* dependency conflicts
+* system consolidation
+* plan evolution
+
+NOT:
+routine execution.
+
+Thought blocks should feel:
+rare enough to matter.
+
+---
+
+# FINAL EXPERIENCE TARGET
+
+The AI should now feel like:
+an autonomous engineering collaborator that:
+
+* adapts while working
+* reprioritizes intelligently
+* notices implementation drift
+* self-corrects naturally
+* manages cognitive bandwidth
+* works silently when appropriate
+* evolves plans dynamically
+* maintains strategic awareness
+
+NOT:
+a sophisticated scripted workflow engine.
+
+MOST IMPORTANT:
+The AI should begin feeling:
+self-directed.

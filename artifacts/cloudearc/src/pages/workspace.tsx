@@ -1102,57 +1102,142 @@ export default function WorkspacePage({ params }: { params: { id: string } }) {
 
   const startThinkingPhase = (taskId: number, userPrompt: string, intent: MessageIntent) => {
     const what = describePrompt(userPrompt);
+    // Deterministic seed from the prompt for this session — drives adaptive behavior selection
+    const seed = userPrompt.length % 12;
 
-    // Planning phase: slower, more reflective messages
+    // ── Silent window decision ───────────────────────────────────────────────
+    // Sometimes the AI works silently for a bit before narrating.
+    // This restraint feels more like a real engineer than constant commentary.
+    const useSilentWindow = seed % 4 === 0;
+
+    if (useSilentWindow) {
+      // Silent window: no step added immediately — just the task spinning.
+      // After a delay, surface a meaningful update that implies work was done.
+      const t1 = setTimeout(() => {
+        const silentReturns = [
+          `The layout structure is clearer than I expected — I already know the component order.`,
+          `Good — the architecture settled quickly. I know exactly how these sections connect.`,
+          `The ${what} shape resolved cleanly. I'm mapping the files now.`,
+        ];
+        addStep(taskId, silentReturns[seed % silentReturns.length]);
+      }, 5800 + Math.random() * 1000);
+
+      const t2 = setTimeout(() => {
+        updateTask(taskId, (t) => ({
+          ...t,
+          state: "running",
+          executionStage: "planning" as ExecutionStage,
+          steps: t.steps.map((s) =>
+            s.state === "running" ? { ...s, text: `Structure is solid — writing ${what} now.` } : s
+          ),
+        }));
+      }, 10500 + Math.random() * 800);
+
+      const t3 = setTimeout(() => {
+        updateTask(taskId, (t) => ({
+          ...t,
+          executionStage: "building" as ExecutionStage,
+          steps: t.steps.map((s) =>
+            s.state === "running" ? { ...s, text: "Momentum is good — working through the remaining sections." } : s
+          ),
+        }));
+      }, 24000 + Math.random() * 2000);
+
+      const t4 = setTimeout(() => {
+        updateTask(taskId, (t) => ({
+          ...t,
+          executionStage: "finalizing" as ExecutionStage,
+          steps: t.steps.map((s) =>
+            s.state === "running" ? { ...s, text: "Final sections landing now." } : s
+          ),
+        }));
+      }, 40000 + Math.random() * 2000);
+
+      void intent;
+      thinkTimers.current = [t1, t2, t3, t4];
+      return;
+    }
+
+    // ── Standard path: reflective → building → finalizing ───────────────────
+
+    // Occasional self-correction variant (rare — very high psychological impact)
+    const useSelfCorrection = seed % 7 === 3;
+    // Occasional plan evolution acknowledgment
+    const usePlanEvolution = seed % 6 === 1;
+    // Multi-thread cognition during building
+    const useMultiThread = seed % 3 === 0;
+
     const planOpeners = [
       `I want the component structure solid before writing anything — the sequencing matters here.`,
       `Thinking through the dependencies before touching any files.`,
-      `The ${what} structure needs to be right up front — it shapes everything downstream.`,
+      `The ${what} structure needs to land right up front — it shapes everything downstream.`,
     ];
-    const s1 = addStep(taskId, planOpeners[Math.floor(Date.now() / 1000) % planOpeners.length]);
+    const s1 = addStep(taskId, planOpeners[seed % planOpeners.length]);
 
-    // Planning: longer pause — reflective cadence
     const t1 = setTimeout(() => {
       resolveStep(taskId, s1, "done");
-      const planProgress = [
-        `The layout structure is becoming clear — I know the component order I want.`,
-        `Good — the architecture is settl­ing. I know how the sections connect.`,
-        `The ${what} shape is clearer now. Starting to map the files.`,
-      ];
-      addStep(taskId, planProgress[Math.floor(Date.now() / 1000) % planProgress.length]);
+
+      if (useSelfCorrection) {
+        // Self-correction: AI catches itself and revises — creates awareness feeling
+        const selfCorrections = [
+          `Actually — there's a cleaner way to structure the ${what}. Revising the approach.`,
+          `I'm changing approach slightly. The initial plan becomes harder to maintain at this scope.`,
+          `I noticed a better component split. Adjusting before going deeper.`,
+        ];
+        addStep(taskId, selfCorrections[seed % selfCorrections.length]);
+      } else {
+        const planProgress = [
+          `The layout structure is becoming clear — I know the component order I want.`,
+          `Good — the architecture is settling. I know how these sections connect.`,
+          `The ${what} shape is clearer now. Starting to map the files.`,
+        ];
+        addStep(taskId, planProgress[seed % planProgress.length]);
+      }
     }, 3200 + Math.random() * 600);
 
-    // Transition into building: blend, don't announce
     const t2 = setTimeout(() => {
       updateTask(taskId, (t) => ({
         ...t,
         state: "running",
         executionStage: "planning" as ExecutionStage,
         steps: t.steps.map((s) =>
-          s.state === "running" ? { ...s, text: `Structure is solid — writing the ${what} now.` } : s
+          s.state === "running" ? { ...s, text: `Structure is solid — writing ${what} now.` } : s
         ),
       }));
     }, 9500 + Math.random() * 800);
 
-    // Building: shorter, quicker updates (faster cadence)
+    // Building: faster cadence; occasionally with multi-thread cognition
     const t3 = setTimeout(() => {
       updateTask(taskId, (t) => ({
         ...t,
         executionStage: "building" as ExecutionStage,
-        steps: t.steps.map((s) =>
-          s.state === "running" ? { ...s, text: "Moving through the components — momentum is good." } : s
-        ),
+        steps: t.steps.map((s) => {
+          if (s.state !== "running") return s;
+          if (useMultiThread) {
+            const multiThreadMsgs = [
+              "Component structure is stable — reviewing responsiveness at the same time.",
+              "While that settles, I'm cleaning up the interaction layer.",
+              "Layout is holding — keeping the animation system lightweight while wiring state.",
+            ];
+            return { ...s, text: multiThreadMsgs[seed % multiThreadMsgs.length] };
+          }
+          return { ...s, text: "Moving through the components — momentum is good." };
+        }),
       }));
     }, 22000 + Math.random() * 1500);
 
-    // Finalizing: calm confidence
+    // Finalizing: calm confidence; occasionally with plan evolution
     const t4 = setTimeout(() => {
       updateTask(taskId, (t) => ({
         ...t,
         executionStage: "finalizing" as ExecutionStage,
-        steps: t.steps.map((s) =>
-          s.state === "running" ? { ...s, text: "Final sections coming in — almost there." } : s
-        ),
+        steps: t.steps.map((s) => {
+          if (s.state !== "running") return s;
+          if (usePlanEvolution) {
+            return { ...s, text: "I adjusted the original sequence slightly — the result is cleaner. Final files landing." };
+          }
+          return { ...s, text: "Final sections coming in — almost there." };
+        }),
       }));
     }, 38000 + Math.random() * 2000);
 

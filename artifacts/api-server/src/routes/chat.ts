@@ -14,6 +14,14 @@ import {
   buildArchNarrative,
   fallbackPlanningThought,
   fallbackArchThought,
+  getReprioritization,
+  getDriftDetection,
+  getSelfCorrection,
+  getCompression,
+  getMultiThread,
+  getStrategicSummary,
+  getPlanEvolution,
+  hashStr,
   type ThoughtBlock,
 } from "../lib/promptOrchestrator";
 
@@ -735,7 +743,28 @@ EXECUTION CHECKLIST — every item is required:
 □ All text is readable: correct contrast for each background color
 □ Real marketing copy: specific feature names, real-sounding testimonials, real prices — NO Lorem ipsum`;
 
-  sseStage(res, "Coding with Qwen3 Coder...");
+  // ── Adaptive pre-build moment ─────────────────────────────────────────────
+  // Occasionally: reprioritize, detect drift, or self-correct before starting.
+  // These feel self-directed rather than scripted.
+  {
+    const seed = prompt.slice(0, 12) + templateType;
+    const adaptiveRoll = Math.abs(hashStr(seed)) % 10;
+
+    if (adaptiveRoll === 0 && allFiles.length > 6) {
+      // Reprioritization: AI changes execution order
+      sseNarrative(res, getReprioritization(seed), "building");
+    } else if (adaptiveRoll === 1 && allFiles.length > 8) {
+      // Drift detection: AI notices inefficiency
+      sseNarrative(res, getDriftDetection(seed), "building");
+    } else if (adaptiveRoll === 2) {
+      // Self-correction: AI catches itself
+      sseNarrative(res, getSelfCorrection(seed), "building");
+    } else if (adaptiveRoll >= 7 && allFiles.length > 5) {
+      // Multi-thread cognition: AI is aware of parallel concerns
+      sseNarrative(res, getMultiThread(seed), "building");
+    }
+    // Otherwise: silent start — restraint is also realism
+  }
 
   let streamEmitted = 0;
   let accumulated = "";
@@ -793,12 +822,28 @@ EXECUTION CHECKLIST — every item is required:
   const duration_ms = Date.now() - startMs;
   log.info({ duration_ms, file_count: streamEmitted, template: templateType }, "Generation complete");
 
+  const elapsed = Math.round(duration_ms / 1000);
+  const seed = templateType + String(streamEmitted);
+
+  // Occasionally emit a strategic summary OR plan evolution acknowledgment
+  // before the final "done" line — creates checkpoint momentum
+  const summaryRoll = Math.abs(hashStr(seed + "end")) % 5;
+  if (summaryRoll === 0 && streamEmitted > 6) {
+    sseNarrative(res, getStrategicSummary(templateType), "building");
+  } else if (summaryRoll === 1 && streamEmitted > 4) {
+    sseNarrative(res, getPlanEvolution(seed), "building");
+  } else if (summaryRoll === 2 && streamEmitted > 8) {
+    // Compression: AI acknowledges repetitive but steady work
+    sseNarrative(res, getCompression("spacing and layout"), "building");
+  }
+
   const doneNarratives = [
-    `That's everything — ${streamEmitted} files in ${Math.round(duration_ms / 1000)}s. Bundling the preview now.`,
-    `All ${streamEmitted} files are done in ${Math.round(duration_ms / 1000)}s. Preview should be ready in a moment.`,
-    `Build complete — ${streamEmitted} files, ${Math.round(duration_ms / 1000)}s. Running the bundler now.`,
+    `That's everything — ${streamEmitted} files, ${elapsed}s. Bundling the preview now.`,
+    `All ${streamEmitted} files are in — ${elapsed}s. Preview should be ready in a moment.`,
+    `Done — ${streamEmitted} files, ${elapsed}s. Running the bundler now.`,
+    `${streamEmitted} files complete in ${elapsed}s. The structure held cleanly. Bundling now.`,
   ];
-  sseNarrative(res, doneNarratives[streamEmitted % doneNarratives.length], "done");
+  sseNarrative(res, doneNarratives[Math.abs(hashStr(seed)) % doneNarratives.length], "done");
 
   sseDone(res, templateType, streamEmitted, styleProfile);
 });
