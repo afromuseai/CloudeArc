@@ -1,0 +1,398 @@
+# MASTER FIX PROMPT — THE APP STILL DOES NOT FEEL AGENTIC
+
+The implementation added enums, states, and UI labels, but the product STILL behaves like a chatbot with loading indicators instead of a real autonomous software agent.
+
+This is NOT a feature issue.
+
+It is an orchestration architecture issue.
+
+The current system feels disconnected because:
+
+* animation is isolated from execution
+* chat updates are isolated from real operations
+* stage transitions are cosmetic
+* activity logs are fake-feeling
+* execution momentum does not exist
+* reasoning visibility lacks continuity
+* the agent does not feel stateful or autonomous
+
+The entire experience must be rebuilt as ONE synchronized execution system.
+
+DO NOT patch isolated components anymore.
+
+Re-architect the execution experience holistically.
+
+---
+
+# THE REAL PROBLEM
+
+Right now:
+
+* stage labels change
+* animations run
+* messages appear
+
+BUT NONE OF THEM FEEL CONNECTED.
+
+The user must FEEL:
+“the AI is actively operating a software workspace in real time.”
+
+Currently it feels like:
+“UI components reacting to timers.”
+
+That is the core failure.
+
+---
+
+# BUILD A REAL AGENT ORCHESTRATION LOOP
+
+The app needs a CENTRAL EXECUTION ORCHESTRATOR.
+
+Create:
+ExecutionOrchestrator
+
+This orchestrator must control:
+
+* agent stages
+* live operations
+* conversational narration
+* animation behavior
+* progress momentum
+* file operations
+* reasoning summaries
+* status bar updates
+* task lifecycle
+* interruption handling
+
+ALL execution-related UI must subscribe to ONE shared orchestration state.
+
+NOT independent local states.
+
+---
+
+# CRITICAL REQUIREMENT
+
+The animation, narration, stage text, and file activity MUST evolve together.
+
+Example:
+
+When stage changes to:
+“Planning component hierarchy…”
+
+ALL of these must synchronize:
+
+* liveness animation rhythm
+* top status text
+* left feed narration
+* operation queue
+* file generation preview
+
+Everything should feel coordinated.
+
+---
+
+# THE AGENT MUST HAVE MOMENTUM
+
+Current issue:
+Every message feels isolated.
+
+Fix this.
+
+The system must maintain:
+
+* execution continuity
+* momentum
+* progressive advancement
+
+The user should feel:
+the agent is MOVING THROUGH WORK.
+
+Not repeatedly restarting.
+
+---
+
+# IMPLEMENT A REAL TASK PIPELINE
+
+Tasks should move through actual lifecycle phases:
+
+queued
+→ understanding
+→ planning
+→ architecture
+→ implementation
+→ refinement
+→ validation
+→ finalization
+→ completed
+
+Each phase should:
+
+* emit contextual events
+* update orchestration state
+* generate contextual narration
+* affect animation behavior
+
+---
+
+# REMOVE GENERIC STATUS TEXT
+
+NEVER display:
+
+* Generating...
+* Working...
+* Loading...
+
+Replace with contextual execution intelligence.
+
+GOOD:
+
+* Mapping dashboard layout structure...
+* Evaluating existing routing system...
+* Refactoring animation state handling...
+* Creating reusable modal abstraction...
+* Resolving conflicting Tailwind utilities...
+
+The AI should narrate WORK.
+Not loading.
+
+---
+
+# BUILD A REAL-TIME ACTIVITY ENGINE
+
+The left panel should become an execution timeline.
+
+Not chat bubbles.
+
+Each activity item should be typed:
+
+* reasoning
+* operation
+* file-change
+* architecture
+* validation
+* warning
+* fix
+* completion
+
+Each item should render differently.
+
+---
+
+# FILE OPERATIONS MUST FEEL REAL
+
+When files change:
+show believable development operations.
+
+Examples:
+
+* Creating app/dashboard/page.tsx
+* Updating tailwind.config.ts
+* Refactoring Sidebar component
+* Resolving type mismatch in workspace.tsx
+
+Display:
+
+* affected files
+* operation type
+* status
+* completion
+
+This should resemble:
+Cursor/Replit activity traces.
+
+---
+
+# MOST IMPORTANT MISSING PIECE:
+
+# EXECUTION CADENCE
+
+Your app currently lacks cadence.
+
+Real agentic systems feel alive because:
+they alternate between:
+
+* thinking
+* acting
+* validating
+* correcting
+* progressing
+
+Implement rhythm.
+
+The UI should breathe computationally.
+
+Examples:
+
+* brief pauses before major operations
+* faster bursts during implementation
+* slower deliberate moments during planning
+* hesitation during debugging
+* calm stabilization during finalization
+
+WITHOUT random fake timers.
+
+Cadence should derive from:
+
+* operation type
+* complexity
+* dependency graph
+* execution phase
+
+---
+
+# LIVENESS ANIMATION IS STILL WRONG
+
+The logo animation still behaves like:
+a loader.
+
+It must behave like:
+an orchestration visualization.
+
+The blocks should feel like:
+distributed computation nodes coordinating around a core engine.
+
+The movement must:
+
+* react to execution phase
+* react to operation intensity
+* pause intelligently
+* accelerate during implementation bursts
+* slow during reasoning
+
+NO infinite identical loop.
+
+Introduce:
+
+* adaptive cadence
+* variable timing
+* execution-aware motion
+
+But preserve:
+
+* exact logo identity
+* exact geometry
+* exact style
+
+---
+
+# BUILD A REAL AGENT MEMORY MODEL
+
+The system must track:
+
+* current objective
+* active subtask
+* completed operations
+* discovered issues
+* pending actions
+* architecture decisions
+
+The AI should reference earlier decisions naturally.
+
+Example:
+“Using the previously created card abstraction for consistency.”
+
+That creates perceived intelligence continuity.
+
+---
+
+# CONVERSATIONAL INTELLIGENCE
+
+Questions should NEVER trigger implementation.
+
+Implement confidence scoring for intent classification.
+
+If confidence < threshold:
+enter clarification mode.
+
+Example:
+“I can either explain this concept or implement it in your app — which would you prefer?”
+
+Current behavior is too trigger-happy.
+
+---
+
+# IMPLEMENT "THINKING MODE"
+
+Thinking mode should:
+
+* temporarily reduce UI noise
+* slow animation cadence
+* emit architecture reasoning
+* avoid file operations
+
+The transition into building should feel noticeable.
+
+Like:
+the AI moved from cognition into execution.
+
+---
+
+# CRITICAL UX REQUIREMENT
+
+The user should ALWAYS know:
+
+* what the agent is doing
+* why it is doing it
+* what changed
+* what happens next
+
+WITHOUT reading long paragraphs.
+
+---
+
+# TOP BAR STILL FEELS STATIC
+
+Transform the top bar into a live execution monitor.
+
+It should display:
+
+* current operation
+* active stage
+* execution pulse
+* orchestration state
+
+The liveness indicator should feel embedded into the execution system.
+
+NOT pasted beside text.
+
+---
+
+# THE MOST IMPORTANT REQUIREMENT
+
+STOP BUILDING:
+“chat UI + loading states.”
+
+START BUILDING:
+“an autonomous execution environment.”
+
+The app should psychologically feel like:
+a real-time AI operating system.
+
+NOT:
+a chatbot pretending to build apps.
+
+---
+
+# FINAL IMPLEMENTATION REQUIREMENTS
+
+Use:
+
+* centralized orchestration state
+* execution event bus
+* synchronized animation controller
+* contextual narration engine
+* operation queue system
+* adaptive stage timing
+* persistent task memory
+
+Everything must feel:
+
+* cohesive
+* intelligent
+* alive
+* progressive
+* autonomous
+* premium
+
+MOST IMPORTANT:
+The system should create the illusion of active software construction in real time.

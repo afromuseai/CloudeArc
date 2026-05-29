@@ -1,0 +1,343 @@
+# MASTER FIX PROMPT — MAKE THE AGENT FEEL LIKE A REAL COLLABORATIVE TEAMMATE
+
+The app still feels like:
+
+* a build system
+* a task executor
+* a logging dashboard
+
+It does NOT feel like:
+a real AI collaborator.
+
+The biggest missing layer is:
+HUMAN CONVERSATIONAL PRESENCE.
+
+Replit succeeds because:
+the AI feels like a teammate talking while working.
+
+NOT a machine emitting logs.
+
+Right now the app narrates:
+operations.
+
+Instead:
+the AI must narrate:
+intent, reasoning, discoveries, decisions, and progress
+like a real collaborative engineer.
+
+---
+
+# CRITICAL UNDERSTANDING
+
+The left panel should NOT feel like:
+terminal output.
+
+It should feel like:
+a conversation between:
+
+* the user
+  and
+* an autonomous AI engineer actively building.
+
+This is the MOST important difference.
+
+---
+
+# THE AI MUST SPEAK NATURALLY
+
+BAD:
+
+* Executing planning phase
+* Updating stage state
+* Running build task
+* Generating component
+
+GOOD:
+
+* I found a cleaner layout structure for this dashboard.
+* I’m reorganizing the sidebar before touching the header.
+* The current spacing system is inconsistent, so I’m fixing that first.
+* Good — the preview is compiling correctly now.
+* I’m updating the card system and checking responsiveness simultaneously.
+* The auth flow needs restructuring before I connect the API routes.
+
+The AI should sound:
+
+* aware
+* intelligent
+* focused
+* collaborative
+* calm
+* confident
+
+NEVER robotic.
+
+---
+
+# IMPORTANT:
+
+# THE AGENT SHOULD TALK LIKE IT IS MULTITASKING
+
+Replit feels alive because:
+the AI references multiple ongoing activities naturally.
+
+Examples:
+
+* “I’m redesigning the hero while also cleaning up the mobile spacing.”
+* “The new sidebar works — now I’m aligning the dashboard cards.”
+* “I found an issue in the animation timing, fixing that before continuing.”
+
+This creates:
+the illusion of active cognition.
+
+Implement this behavior.
+
+---
+
+# REPLACE "ACTIVITY FEED" WITH:
+
+# COLLABORATIVE EXECUTION CHAT
+
+The left panel should become:
+a flowing teammate conversation.
+
+The AI should:
+
+* explain what it is doing
+* mention discoveries
+* narrate decisions
+* acknowledge progress
+* smoothly transition between tasks
+
+The messages should feel:
+continuous.
+
+NOT isolated.
+
+---
+
+# IMPLEMENT MESSAGE MEMORY
+
+The AI should reference prior messages naturally.
+
+Example:
+Earlier:
+“I’m restructuring the dashboard grid first.”
+
+Later:
+“Now that the grid is stable, I’m connecting the analytics widgets.”
+
+This continuity creates:
+perceived intelligence and awareness.
+
+---
+
+# REMOVE EXCESSIVE TECHNICAL LOGGING
+
+DO NOT flood the feed with:
+
+* system events
+* file operation spam
+* repetitive stage labels
+* generic updates
+
+Users care about:
+meaningful progress narrative.
+
+Technical operations should be:
+secondary metadata.
+
+NOT the main conversation.
+
+---
+
+# THE AI MUST HAVE A PERSONALITY
+
+Not a gimmick personality.
+
+A WORKING ENGINEER personality.
+
+Traits:
+
+* calm
+* thoughtful
+* focused
+* proactive
+* technically confident
+* collaborative
+
+The AI should occasionally:
+
+* acknowledge discoveries
+* explain tradeoffs
+* mention implementation strategy
+* proactively improve things
+
+Example:
+“I noticed the current navbar structure will make responsiveness harder later, so I’m simplifying it first.”
+
+That feels HUMAN.
+
+---
+
+# CRITICAL:
+
+# THE AGENT MUST FEEL LIKE IT IS THINKING IN REAL TIME
+
+Current issue:
+messages feel pre-generated.
+
+Fix this.
+
+The cadence should feel:
+dynamic and reactive.
+
+Examples:
+
+* shorter updates during implementation bursts
+* longer reflective messages during planning
+* pauses before major architectural decisions
+* quick confirmations after successful operations
+
+---
+
+# BUILD A NARRATIVE ENGINE
+
+Create:
+NarrativeOrchestrator
+
+This system should:
+
+* track execution context
+* summarize ongoing work
+* generate conversational progress updates
+* maintain continuity
+* adapt tone to execution stage
+
+The AI should NEVER repeat the same phrasing patterns.
+
+---
+
+# IMPORTANT:
+
+# THE AGENT MUST SOMETIMES SOUND UNCERTAIN
+
+Not fake confidence everywhere.
+
+Examples:
+
+* “I’m checking whether the current state structure can support this cleanly.”
+* “The existing animation system is more coupled than expected, so I’m untangling that first.”
+
+This dramatically increases realism.
+
+---
+
+# CONVERSATION MODE + BUILD MODE MUST BLEND
+
+Current issue:
+conversation mode and build mode feel separate.
+
+Instead:
+they should merge naturally.
+
+Example:
+User:
+“Hello”
+
+AI:
+“What are you thinking of building today?”
+
+User:
+“A finance dashboard maybe.”
+
+AI:
+“Nice — I’ll help shape it with you. Do you want something more analytical, minimal, or enterprise-heavy?”
+
+Then AFTER enough clarity:
+the AI transitions naturally into:
+
+* planning
+* building
+* narrating progress
+
+WITHOUT abrupt mode switches.
+
+---
+
+# CRITICAL UX REQUIREMENT
+
+The user should ALWAYS feel:
+the AI is:
+
+* listening
+* understanding
+* reasoning
+* adapting
+* building collaboratively
+
+NOT:
+executing scripted workflows.
+
+---
+
+# THE CHAT MUST FEEL LIKE A LIVE COLLABORATION
+
+Replit works because:
+the AI feels present.
+
+The messages feel:
+
+* contextual
+* reactive
+* evolving
+* continuous
+
+The AI behaves like:
+an engineer sitting beside the user.
+
+That is the target experience.
+
+---
+
+# IMPORTANT IMPLEMENTATION CHANGE
+
+Stop generating:
+
+* isolated feed messages
+
+Start generating:
+
+* contextual conversational narrative chains
+
+Each new message should:
+
+* connect to the previous one
+* reference current progress
+* mention next actions
+* maintain continuity
+
+---
+
+# REDUCE UI NOISE
+
+The magic is NOT:
+more loaders
+more labels
+more icons
+more logs
+
+The magic is:
+believable collaborative presence.
+
+---
+
+# FINAL GOAL
+
+The final experience should feel like:
+
+“I’m collaborating with an autonomous AI engineer that is actively building while talking to me naturally in real time.”
+
+NOT:
+
+“I’m watching a chatbot print execution updates.”

@@ -1,0 +1,122 @@
+CloudeArc generation pipeline is now stable.
+
+We are now implementing REAL live-generation streaming UX similar to Replit Agent.
+
+IMPORTANT:
+Do NOT redesign backend architecture.
+Do NOT rebuild the sandbox.
+Do NOT add multi-agent systems.
+Do NOT refactor unrelated infrastructure.
+
+Focus ONLY on streaming generation experience.
+
+TASK:
+
+Implement true progressive generation streaming across the full stack.
+
+GOALS:
+
+1. Stream AI responses progressively
+   Instead of waiting for the full JSON/action response:
+
+* stream chunks from the API
+* process actions incrementally
+* execute actions as they arrive
+
+2. Add SSE or streaming response support
+   Backend:
+
+* convert /api/chat to streaming mode
+* stream events progressively
+* support:
+
+  * status events
+  * task events
+  * file events
+  * completion events
+
+Suggested event types:
+
+* status
+* thinking
+* file_start
+* file_complete
+* preview_update
+* complete
+* error
+
+3. Frontend live execution
+   workspace.tsx should:
+
+* consume streamed events progressively
+* update task UI in real time
+* execute write_file actions immediately
+* progressively update the preview
+
+4. Live file creation feel
+   When files stream:
+
+* add them immediately to file explorer
+* animate appearance
+* show:
+
+  * "Creating src/App.jsx..."
+  * "Styling src/index.css..."
+  * "Building HeroSection.jsx..."
+
+5. Progressive preview evolution
+   Do NOT wait for all files.
+
+After important writes:
+
+* refresh preview intelligently
+* allow user to watch app evolve live
+* avoid hard iframe flashing if possible
+
+6. Task timeline UI
+   Create a proper generation timeline:
+
+* spinner while active
+* checkmark on completion
+* smooth transitions
+* collapsible task groups
+
+Examples:
+✓ Understanding request
+✓ Designing layout
+✓ Building navbar
+⟳ Creating hero section
+• Styling pricing cards
+
+7. Streaming parser
+   If using delimiter format:
+
+* parse streamed delimiters safely
+* handle partial chunks correctly
+* prevent malformed partial execution
+
+8. Performance requirements
+
+* generation should always feel active
+* no frozen waiting periods
+* no duplicate task cards
+* preserve Monaco stability
+
+9. Error handling
+   If streaming fails:
+
+* gracefully recover
+* finalize partial files safely
+* show readable UI errors
+
+10. Preserve current architecture simplicity
+    NO:
+
+* sync engine
+* overengineered abstractions
+* massive state machines
+* orchestration systems
+
+Goal:
+CloudeArc should feel alive while generating apps.
+Users should visually experience the app being built in real time.

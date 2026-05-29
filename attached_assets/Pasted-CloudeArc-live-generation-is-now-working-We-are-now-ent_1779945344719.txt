@@ -1,0 +1,101 @@
+CloudeArc live generation is now working.
+
+We are now entering AI design intelligence mode.
+
+IMPORTANT:
+Do NOT redesign backend systems.
+Do NOT rebuild the runtime.
+Do NOT add autonomous agents.
+Do NOT touch unrelated infrastructure.
+
+Focus ONLY on improving design judgment and generation quality.
+
+TASK:
+
+Build a design-intelligence layer for CloudeArc generations.
+
+GOALS:
+
+1. Improve visual hierarchy
+   Generated apps should have:
+
+* clear focal points
+* strong typography hierarchy
+* balanced spacing
+* clean section rhythm
+* proper content density
+
+2. Improve aesthetic quality
+   Generated websites should feel:
+
+* premium
+* modern
+* startup-grade
+* polished
+* intentional
+
+Avoid:
+
+* generic Tailwind layouts
+* cramped spacing
+* random gradients
+* inconsistent UI patterns
+
+3. Create generation taste rules
+   Teach the generator:
+
+* when to use centered layouts
+* when to use split layouts
+* when to use Bento grids
+* when to use cards vs sections
+* how to structure landing pages properly
+
+4. Improve component composition
+   Enhance:
+
+* navbars
+* hero sections
+* feature layouts
+* pricing sections
+* dashboards
+* CTAs
+* footers
+* testimonials
+
+5. Add modern interaction patterns
+   Include:
+
+* subtle motion
+* hover transitions
+* fade-ins
+* staggered appearance
+* smooth UI interactions
+
+6. Improve responsive behavior
+   Generated apps must:
+
+* look premium on mobile
+* maintain spacing hierarchy
+* avoid broken stacking
+* preserve readability
+
+7. Add design consistency rules
+   Ensure:
+
+* consistent border radii
+* spacing systems
+* shadow systems
+* typography systems
+* color balance
+
+8. Improve image/layout composition
+   Generated pages should:
+
+* use strong visual balance
+* avoid awkward image placement
+* maintain premium section structure
+
+9. Preserve generation speed and reliability.
+
+Goal:
+Generated websites should visually compete with modern startup websites built by designers.
