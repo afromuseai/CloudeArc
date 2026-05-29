@@ -564,20 +564,22 @@ router.post("/", async (req: Request, res: Response) => {
   const styleProfile = buildStyleProfile(templateType, styleMode, inspiration);
   log.info({ styleMode, hasInspiration: !!inspiration }, "Style profile detected");
 
-  const inspirationNote = inspiration ? ` Channeling ${inspiration.split(" — ")[0]} as a reference.` : "";
-  sseNarrative(res,
-    `On it — I'll build a ${templateType} for you with the ${styleProfile.label} aesthetic.${inspirationNote} Let me think through the structure before I start writing anything.`,
-    "understanding"
-  );
-  sseMomentum(res, `Building ${templateType}`, "Understanding requirements");
-  sseStage(res, `Thinking through the ${templateType} structure...`);
+  const inspirationNote = inspiration ? ` ${inspiration.split(" — ")[0]} as the visual reference.` : "";
+  // Opening: engaged with the problem, not announcing a system phase
+  const openings = [
+    `${styleProfile.label} aesthetic${inspirationNote ? " — " + inspirationNote.trim() : ""}. Before I write anything, I want to think through the component structure — the sequencing matters here.`,
+    `Interesting brief. I'm going to work through the dependencies before touching any files — getting that order right makes the rest significantly cleaner.`,
+    `${styleProfile.label}${inspirationNote ? ", " + inspirationNote.trim() : ""}. Let me think through this properly before starting — I want the structure solid before any code lands.`,
+  ];
+  const openingIdx = Math.abs(prompt.length + templateType.length) % openings.length;
+  sseNarrative(res, openings[openingIdx], "understanding");
+  sseMomentum(res, `Building ${templateType}`, "Thinking through the structure");
 
   // ── Stage 1: Plan + thought blocks (Reasoner agent) ──────────────────────
   let steps: string[] = [];
   let planningThought: ThoughtBlock | null = null;
 
   try {
-    sseStage(res, "Mapping component hierarchy and data flow...");
     sseMomentum(res, `Building ${templateType}`, "Decomposing into implementation steps");
 
     const planRaw = await callModel(
@@ -619,8 +621,10 @@ router.post("/", async (req: Request, res: Response) => {
       planningThought = fallbackPlanningThought(templateType, steps);
     }
 
-    // Emit thought block BEFORE the plan narrative
-    sseThought(res, planningThought);
+    // Only emit thought block if there's genuine architectural reasoning
+    if (planningThought && (planningThought.reasoning || planningThought.insights?.length)) {
+      sseThought(res, planningThought);
+    }
 
     if (steps.length) {
       const planText = buildNarrativeFromSteps(steps);
@@ -644,8 +648,7 @@ router.post("/", async (req: Request, res: Response) => {
   let archThought: ThoughtBlock | null = null;
 
   try {
-    sseStage(res, "Resolving component list...");
-    sseMomentum(res, `Building ${templateType}`, "Mapping component architecture");
+    sseMomentum(res, `Building ${templateType}`, "Settling component boundaries");
 
     const archRaw = await callModel(
       REASONER_MODEL,
@@ -697,13 +700,15 @@ router.post("/", async (req: Request, res: Response) => {
   const allFiles = [...coreFiles, ...sectionComponents];
   log.info({ files: allFiles }, "Architecture resolved");
 
-  // Emit architectural thought block + narrative
-  sseThought(res, archThought);
+  // Only emit arch thought block when it has real substance
+  if (archThought && (archThought.reasoning || archThought.insights?.length)) {
+    sseThought(res, archThought);
+  }
 
+  // Smooth transition into building — no hard "architecture complete" cutover
   const archNarrative = buildArchNarrative(coreFiles, sectionComponents, allFiles);
   sseNarrative(res, archNarrative, "building");
   sseMomentum(res, `Building ${templateType}`, `Writing ${allFiles.length} files`);
-  sseStage(res, `Writing ${allFiles.length} files...`);
 
   // ── Stage 3: Code generation (Coder agent — streaming) ─────────────────────
   const codeSystemPrompt = buildCodeSystemPrompt(templateType, templateConfig, styleProfile.brief);

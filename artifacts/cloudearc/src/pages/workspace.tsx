@@ -388,70 +388,67 @@ function TaskCardView({
 
   return (
     <div
-      className="rounded-xl border border-white/[0.07] bg-white/[0.025] overflow-hidden transition-all duration-300"
+      className="overflow-hidden transition-all duration-300"
       style={{
-        boxShadow: isActive ? "0 0 0 1px rgba(255,255,255,0.04), 0 4px 24px rgba(0,0,0,0.3)" : "none",
+        borderRadius: "10px",
+        border: isActive
+          ? "1px solid rgba(255,255,255,0.07)"
+          : "1px solid rgba(255,255,255,0.035)",
+        background: isActive ? "rgba(255,255,255,0.022)" : "transparent",
+        boxShadow: isActive ? "0 4px 20px rgba(0,0,0,0.25)" : "none",
       }}
     >
-      {/* Progress bar */}
+      {/* Subtle progress shimmer — only active, no hard "done" bar */}
       {isActive && (
-        <div className="h-[2px] w-full bg-white/[0.06] relative overflow-hidden ca-shimmer-bar" />
-      )}
-      {task.state === "done" && (
-        <div className="h-[2px] w-full bg-white/[0.1]" />
+        <div className="h-[1.5px] w-full bg-white/[0.04] relative overflow-hidden ca-shimmer-bar" />
       )}
 
       {/* Header */}
       <button
-        className="w-full flex items-center gap-2.5 px-3 py-2.5 text-left"
+        className="w-full flex items-center gap-2 px-2.5 py-2 text-left"
         onClick={() => canCollapse && onToggle(task.id)}
       >
         <span className="shrink-0">
-          {task.state === "thinking" && <Spinner size={13} />}
-          {task.state === "running"  && <Spinner size={13} />}
+          {(task.state === "thinking" || task.state === "running") && <Spinner size={12} />}
           {task.state === "done" && (
-            <span className="inline-flex w-[13px] h-[13px] items-center justify-center rounded-full bg-white/10">
-              <span className="text-[9px] text-zinc-300">✓</span>
-            </span>
+            <span className="text-[9px] text-zinc-600">✓</span>
           )}
           {task.state === "error" && (
-            <span className="inline-flex w-[13px] h-[13px] items-center justify-center rounded-full bg-red-500/20">
-              <span className="text-[9px] text-red-400">✗</span>
-            </span>
+            <span className="text-[9px] text-red-500">✗</span>
           )}
         </span>
 
-        <span className={`flex-1 text-sm font-medium leading-snug min-w-0 ${
-          task.state === "done" ? "text-zinc-400" : "text-zinc-200"
+        <span className={`flex-1 text-[12.5px] font-medium leading-snug min-w-0 ${
+          task.state === "done" ? "text-zinc-600" : "text-zinc-300"
         }`}>
           {task.label}
           {task.state === "thinking" && <ThinkingDots />}
         </span>
 
         {task.fileCount > 0 && (
-          <span className="shrink-0 text-[10px] text-zinc-600 tabular-nums mr-0.5">
-            {task.fileCount} file{task.fileCount !== 1 ? "s" : ""}
+          <span className="shrink-0 text-[9px] text-zinc-700 tabular-nums font-mono">
+            {task.fileCount}f
           </span>
         )}
 
         {canCollapse && (
-          <span className="text-zinc-600 text-xs shrink-0">
+          <span className="text-zinc-700 text-[9px] shrink-0 ml-0.5">
             {task.collapsed ? "▸" : "▾"}
           </span>
         )}
       </button>
 
-      {/* Steps */}
+      {/* Steps — no hard border, just indented flow */}
       {showSteps && (
-        <div className="px-3 pb-2.5 border-t border-white/[0.04] pt-2 space-y-[1px]">
+        <div className="px-2.5 pb-2 pt-0.5 space-y-0">
           {task.steps.map((s) => <StepRow key={s.id} step={s} />)}
         </div>
       )}
 
-      {/* Summary */}
+      {/* Summary — quiet, unboxed */}
       {task.summary && !task.collapsed && (
-        <div className={`px-3 pb-3 text-xs leading-relaxed ${
-          task.state === "error" ? "text-red-400" : "text-zinc-500"
+        <div className={`px-2.5 pb-2.5 text-[11px] leading-relaxed ${
+          task.state === "error" ? "text-red-400/70" : "text-zinc-600"
         }`}>
           {task.summary}
         </div>
@@ -471,9 +468,13 @@ function AgentBubble({ msg }: { msg: NarrativeMessage }) {
     setDisplayed("");
     setTyping(true);
     let i = 0;
-    const MS_PER_CHAR = 18;
+    // Pacing: planning/understanding = slower, more reflective; building = faster
+    const isReflective = msg.stage === "planning" || msg.stage === "understanding";
+    const BASE_MS = isReflective ? 22 : 12;
     const timer = setInterval(() => {
-      i += Math.random() < 0.15 ? 2 : 1;
+      // Occasional double-advance creates natural typing rhythm variation
+      const burst = Math.random() < (isReflective ? 0.1 : 0.2) ? 2 : 1;
+      i += burst;
       if (i >= msg.text.length) {
         setDisplayed(msg.text);
         setTyping(false);
@@ -481,20 +482,20 @@ function AgentBubble({ msg }: { msg: NarrativeMessage }) {
       } else {
         setDisplayed(msg.text.slice(0, i));
       }
-    }, MS_PER_CHAR);
+    }, BASE_MS);
     return () => clearInterval(timer);
-  }, [msg.text]);
+  }, [msg.text, msg.stage]);
 
   return (
-    <div className="ca-step-row py-0.5 pl-1">
+    <div className="ca-step-row py-1 pl-0.5">
       <p
-        className="text-[12.5px] leading-[1.75] whitespace-pre-line"
-        style={{ color: "rgba(212,212,216,0.9)" }}
+        className="text-[12.5px] leading-[1.8] whitespace-pre-line"
+        style={{ color: "rgba(212,212,216,0.88)" }}
       >
         {displayed}
         {typing && (
           <span
-            className="ca-cursor inline-block w-[1.5px] h-[12px] ml-[1px] rounded-sm bg-zinc-400"
+            className="ca-cursor inline-block w-[1.5px] h-[12px] ml-[1px] rounded-sm bg-zinc-500"
             style={{ verticalAlign: "text-bottom" }}
           />
         )}
@@ -1024,12 +1025,23 @@ export default function WorkspacePage({ params }: { params: { id: string } }) {
   };
 
   const startEditThinkingPhase = (taskId: number) => {
-    const s1 = addStep(taskId, "Looking at what's currently there...");
+    // Editing: investigative → targeted → executing
+    const editOpenings = [
+      "Tracing through the current structure to find the cleanest place to make this change.",
+      "Reading through what's there before touching anything.",
+      "Let me see where this fits into the existing layout.",
+    ];
+    const s1 = addStep(taskId, editOpenings[Date.now() % editOpenings.length]);
 
     const t1 = setTimeout(() => {
       resolveStep(taskId, s1, "done");
-      addStep(taskId, "Found exactly where to make this change.");
-    }, 1800);
+      const found = [
+        "Found it — I know exactly what needs to move.",
+        "The change is more localized than I expected. Good.",
+        "Identified the right entry point — keeping this surgical.",
+      ];
+      addStep(taskId, found[Date.now() % found.length]);
+    }, 1600 + Math.random() * 600);
 
     const t2 = setTimeout(() => {
       updateTask(taskId, (t) => ({
@@ -1037,21 +1049,33 @@ export default function WorkspacePage({ params }: { params: { id: string } }) {
         state: "running",
         executionStage: "planning" as ExecutionStage,
         steps: t.steps.map((s) =>
-          s.state === "running" ? { ...s, text: "Keeping it targeted — editing only what needs to move." } : s
+          s.state === "running" ? { ...s, text: "Editing only what needs to change — nothing else moves." } : s
         ),
       }));
-    }, 5500);
+    }, 4800 + Math.random() * 800);
 
     thinkTimers.current = [t1, t2];
   };
 
   const startDebugThinkingPhase = (taskId: number) => {
-    const s1 = addStep(taskId, "Let me trace through what's happening here...");
+    // Debugging: irregular cadence, hesitation, investigation rhythm
+    const debugOpenings = [
+      "Tracing through the rendering path to see where this breaks down.",
+      "Let me follow the state flow and see where it becomes inconsistent.",
+      "I'm checking whether this is a structural issue or a surface one.",
+    ];
+    const s1 = addStep(taskId, debugOpenings[Date.now() % debugOpenings.length]);
 
+    // Irregular timing — debugging doesn't have a clean rhythm
     const t1 = setTimeout(() => {
       resolveStep(taskId, s1, "done");
-      addStep(taskId, "Interesting — I see something worth looking at.");
-    }, 2000);
+      const discoveries = [
+        "Interesting — the state flow is slightly more coupled than expected here.",
+        "Found something — the component structure is creating the inconsistency.",
+        "I see it. The issue is earlier in the chain than it appears.",
+      ];
+      addStep(taskId, discoveries[Date.now() % discoveries.length]);
+    }, 2200 + Math.random() * 900);
 
     const t2 = setTimeout(() => {
       updateTask(taskId, (t) => ({
@@ -1059,19 +1083,19 @@ export default function WorkspacePage({ params }: { params: { id: string } }) {
         state: "running",
         executionStage: "debugging" as ExecutionStage,
         steps: t.steps.map((s) =>
-          s.state === "running" ? { ...s, text: "Found it — I know what needs to change." } : s
+          s.state === "running" ? { ...s, text: "Traced it down — applying the fix now." } : s
         ),
       }));
-    }, 5500);
+    }, 5800 + Math.random() * 1200);
 
     const t3 = setTimeout(() => {
       updateTask(taskId, (t) => ({
         ...t,
         steps: t.steps.map((s) =>
-          s.state === "running" ? { ...s, text: "Applying the correction now." } : s
+          s.state === "running" ? { ...s, text: "Working through the correction — keeping it minimal." } : s
         ),
       }));
-    }, 16000);
+    }, 15000 + Math.random() * 2000);
 
     thinkTimers.current = [t1, t2, t3];
   };
@@ -1079,43 +1103,58 @@ export default function WorkspacePage({ params }: { params: { id: string } }) {
   const startThinkingPhase = (taskId: number, userPrompt: string, intent: MessageIntent) => {
     const what = describePrompt(userPrompt);
 
-    const s1 = addStep(taskId, "Let me think through the structure for this...");
+    // Planning phase: slower, more reflective messages
+    const planOpeners = [
+      `I want the component structure solid before writing anything — the sequencing matters here.`,
+      `Thinking through the dependencies before touching any files.`,
+      `The ${what} structure needs to be right up front — it shapes everything downstream.`,
+    ];
+    const s1 = addStep(taskId, planOpeners[Math.floor(Date.now() / 1000) % planOpeners.length]);
 
+    // Planning: longer pause — reflective cadence
     const t1 = setTimeout(() => {
       resolveStep(taskId, s1, "done");
-      addStep(taskId, `I'll start with ${what} — getting that right sets the foundation.`);
-    }, 2800);
+      const planProgress = [
+        `The layout structure is becoming clear — I know the component order I want.`,
+        `Good — the architecture is settl­ing. I know how the sections connect.`,
+        `The ${what} shape is clearer now. Starting to map the files.`,
+      ];
+      addStep(taskId, planProgress[Math.floor(Date.now() / 1000) % planProgress.length]);
+    }, 3200 + Math.random() * 600);
 
+    // Transition into building: blend, don't announce
     const t2 = setTimeout(() => {
       updateTask(taskId, (t) => ({
         ...t,
         state: "running",
         executionStage: "planning" as ExecutionStage,
         steps: t.steps.map((s) =>
-          s.state === "running" ? { ...s, text: "Working through the component layout now..." } : s
+          s.state === "running" ? { ...s, text: `Structure is solid — writing the ${what} now.` } : s
         ),
       }));
-    }, 9000);
+    }, 9500 + Math.random() * 800);
 
+    // Building: shorter, quicker updates (faster cadence)
     const t3 = setTimeout(() => {
       updateTask(taskId, (t) => ({
         ...t,
         executionStage: "building" as ExecutionStage,
         steps: t.steps.map((s) =>
-          s.state === "running" ? { ...s, text: `Writing ${what} — almost through the main sections.` } : s
+          s.state === "running" ? { ...s, text: "Moving through the components — momentum is good." } : s
         ),
       }));
-    }, 22000);
+    }, 22000 + Math.random() * 1500);
 
+    // Finalizing: calm confidence
     const t4 = setTimeout(() => {
       updateTask(taskId, (t) => ({
         ...t,
         executionStage: "finalizing" as ExecutionStage,
         steps: t.steps.map((s) =>
-          s.state === "running" ? { ...s, text: "Wrapping up — final files coming in." } : s
+          s.state === "running" ? { ...s, text: "Final sections coming in — almost there." } : s
         ),
       }));
-    }, 38000);
+    }, 38000 + Math.random() * 2000);
 
     void intent;
     thinkTimers.current = [t1, t2, t3, t4];

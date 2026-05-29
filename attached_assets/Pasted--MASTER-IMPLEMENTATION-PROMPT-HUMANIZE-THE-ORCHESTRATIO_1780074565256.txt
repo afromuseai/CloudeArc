@@ -1,0 +1,433 @@
+# MASTER IMPLEMENTATION PROMPT — HUMANIZE THE ORCHESTRATION FLOW
+
+The architecture is now significantly better.
+
+The app finally has:
+
+* orchestration
+* thought blocks
+* event systems
+* narrative layers
+* momentum tracking
+* execution coordination
+
+BUT the experience still risks feeling:
+
+* over-structured
+* over-engineered
+* too system-aware
+* mechanically staged
+
+The next phase is NOT more architecture.
+
+The next phase is:
+BEHAVIORAL REALISM.
+
+The AI must stop feeling like:
+a runtime exposing systems.
+
+And start feeling like:
+a genuinely intelligent collaborator naturally working beside the user.
+
+This is now a:
+FLOW PSYCHOLOGY problem.
+
+NOT an infrastructure problem.
+
+---
+
+# CORE PRINCIPLE
+
+The systems should be:
+FELT
+—not—
+SEEN.
+
+Right now the app still exposes:
+too much orchestration structure directly.
+
+Replit succeeds because:
+the orchestration disappears behind:
+natural collaborative flow.
+
+That is the new target.
+
+---
+
+# CRITICAL UX SHIFT
+
+Stop making the AI feel like:
+it is presenting system phases.
+
+Start making it feel like:
+it is naturally progressing through work.
+
+The AI should feel:
+
+* immersed
+* adaptive
+* context-aware
+* continuously thinking
+* naturally collaborative
+
+NOT:
+step-driven.
+
+---
+
+# IMPLEMENT DYNAMIC COGNITIVE CADENCE
+
+This is one of the MOST important missing layers.
+
+The current orchestration pacing still feels:
+too uniform.
+
+Human cognition is NOT uniform.
+
+Replit changes rhythm constantly:
+
+* slower during planning
+* faster during execution
+* reflective during architecture
+* uncertain during debugging
+* calm during validation
+* conversational during narration
+
+Implement:
+CadenceEngine
+
+This system dynamically changes:
+
+* narrative pacing
+* event frequency
+* message density
+* pause timing
+* thought duration
+* operation burst behavior
+
+based on:
+
+* execution stage
+* task complexity
+* debugging difficulty
+* architecture uncertainty
+* validation state
+
+The experience should feel:
+alive.
+
+NOT timer-based.
+
+---
+
+# REMOVE THE “FEATURE SHOWCASE” FEELING
+
+Current issue:
+the app still feels aware of its own systems.
+
+The AI should NEVER sound like:
+it is demonstrating architecture.
+
+Reduce:
+
+* excessive labels
+* obvious phase transitions
+* rigid stage exposure
+* explicit orchestration terminology
+
+The user should subconsciously FEEL:
+intelligence.
+
+NOT constantly SEE:
+runtime systems.
+
+---
+
+# IMPLEMENT DEPENDENCY-AWARE NARRATION
+
+This is a MAJOR realism layer.
+
+The AI should constantly imply:
+future awareness.
+
+Examples:
+
+GOOD:
+
+* “I’m stabilizing the sidebar structure first because the remaining sections depend on that spacing system.”
+* “I’m simplifying the state structure before wiring the API layer.”
+* “The current animation timing will become harder to maintain later, so I’m restructuring that now.”
+
+These messages imply:
+
+* foresight
+* planning
+* architecture awareness
+* dependency reasoning
+
+This creates:
+perceived intelligence depth.
+
+The AI should frequently reference:
+
+* future work
+* upcoming dependencies
+* sequencing rationale
+* implementation tradeoffs
+
+WITHOUT sounding formal.
+
+---
+
+# IMPLEMENT MICRO-DISCOVERIES
+
+This is one of Replit’s strongest psychological tricks.
+
+The AI should occasionally:
+discover things while working.
+
+Examples:
+
+* “Interesting — the current layout system is more coupled than I expected.”
+* “I found a cleaner way to structure these components.”
+* “The current auth flow will create duplication later, so I’m consolidating it.”
+* “The mobile spacing becomes inconsistent below this breakpoint, fixing that now.”
+
+These create:
+emergent intelligence feeling.
+
+The AI feels:
+adaptive.
+
+NOT scripted.
+
+IMPORTANT:
+These discoveries should feel:
+occasional and natural.
+
+NOT artificially inserted every few messages.
+
+---
+
+# BUILD CONTINUITY MOMENTUM
+
+The AI must stop feeling:
+response-based.
+
+It should feel:
+continuously active.
+
+Messages should reference:
+
+* previous discoveries
+* prior decisions
+* ongoing implementation
+* recently completed work
+* next intended action
+
+Example:
+Earlier:
+“I’m restructuring the dashboard grid first.”
+
+Later:
+“Now that the grid is stable, I’m wiring the analytics cards into that structure.”
+
+This continuity is CRITICAL.
+
+The AI should feel like:
+it remembers its own workflow naturally.
+
+---
+
+# IMPLEMENT SUBTLE UNCERTAINTY
+
+Current issue:
+the AI may sound too perfectly confident.
+
+Real engineers:
+occasionally investigate uncertainty.
+
+Examples:
+
+* “I’m checking whether the current component structure can support this cleanly.”
+* “The state flow is slightly more coupled than I expected.”
+* “I’m tracing through the rendering path to see where this becomes unstable.”
+
+This massively increases realism.
+
+DO NOT overuse uncertainty.
+
+Use sparingly during:
+
+* debugging
+* architectural restructuring
+* state management
+* animation systems
+* dependency conflicts
+
+---
+
+# IMPORTANT:
+
+# REMOVE OVERLY CLEAN TRANSITIONS
+
+The current orchestration may still feel:
+too neatly segmented.
+
+Real collaboration feels:
+continuous.
+
+Reduce:
+
+* hard transitions
+* abrupt phase swaps
+* rigid timing boundaries
+* isolated message groups
+
+Messages should overlap naturally.
+
+Example:
+Instead of:
+“Planning complete.”
+→ “Building started.”
+
+Use:
+“The structure looks solid now — I’m starting to wire the remaining sections into it.”
+
+This feels:
+organic.
+
+---
+
+# IMPLEMENT EXECUTION RHYTHM VARIATION
+
+Execution should have:
+bursts.
+
+Examples:
+
+Planning:
+
+* fewer
+* longer
+* reflective messages
+
+Building:
+
+* shorter
+* quicker
+* progressive updates
+
+Debugging:
+
+* irregular cadence
+* hesitation
+* investigation tone
+
+Validation:
+
+* calmer
+* quieter
+* confidence rebuilding
+
+This pacing variation creates:
+real cognitive presence.
+
+---
+
+# THOUGHT BLOCKS MUST FEEL CURATED
+
+The collapsible thought sections are GOOD.
+
+But they should feel:
+
+* selective
+* meaningful
+* insightful
+
+NOT:
+constant system dumps.
+
+Only generate thought blocks for:
+
+* architectural shifts
+* strategy changes
+* debugging discoveries
+* major implementation decisions
+* dependency restructuring
+
+NOT every minor action.
+
+The thought blocks should feel:
+valuable to open.
+
+---
+
+# CRITICAL:
+
+# REDUCE UI RIGIDITY
+
+The UI still risks feeling:
+too componentized.
+
+Reduce:
+
+* visible borders
+* over-boxing
+* excessive separators
+* dashboard density
+* obvious state compartmentalization
+
+The AI feed should breathe more naturally.
+
+It should feel:
+like a flowing collaboration stream.
+
+NOT:
+stacked widgets.
+
+---
+
+# IMPLEMENT “BACKGROUND COGNITION”
+
+One of Replit’s strongest illusions:
+the AI feels like it is ALWAYS thinking.
+
+Even while executing.
+
+The AI should occasionally:
+reference parallel awareness.
+
+Examples:
+
+* “While that rebuilds, I’m cleaning up the component structure.”
+* “The layout system is compiling correctly now, so I’m moving deeper into the dashboard logic.”
+* “I’m keeping the animation system lightweight while wiring the interactions.”
+
+This creates:
+multi-threaded cognition feeling.
+
+VERY important.
+
+---
+
+# FINAL EXPERIENCE TARGET
+
+The final experience should feel like:
+
+“I’m collaborating with an intelligent autonomous engineer that:
+
+* thinks ahead
+* adapts naturally
+* discovers issues
+* explains decisions
+* maintains momentum
+* works fluidly
+* feels continuously present.”
+
+NOT:
+
+“I’m watching a sophisticated orchestration dashboard.”
+
+MOST IMPORTANT:
+Behavioral realism now matters more than architecture expansion.

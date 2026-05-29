@@ -187,8 +187,89 @@ class AIOrchestrator {
   }
 }
 
+// ── CadenceEngine ─────────────────────────────────────────────────────────────
+// Controls narrative rhythm and micro-discovery generation.
+// The goal: feel like emergent intelligence, not a progress dashboard.
+
+const MICRO_DISCOVERIES = [
+  "The component structure ended up slightly more coupled than expected — restructuring to keep things clean.",
+  "Noticed the mobile spacing becomes inconsistent below the md breakpoint — correcting that now.",
+  "Found a cleaner pattern for the animation timing across sections.",
+  "The current prop shape would create duplication further down — consolidating it while it's easy.",
+  "Interesting — the section order works better inverted here.",
+  "The token system from earlier is making this part significantly simpler.",
+  "Caught a z-index conflict between the navbar and modal layer — resolving that now.",
+];
+
+const CONTINUITY_BRIDGES = [
+  (prev: string) => `Building on the ${prev} structure from earlier —`,
+  (prev: string) => `Now that ${prev} is settled —`,
+  (prev: string) => `With ${prev} stable, moving to`,
+  (prev: string) => `The earlier ${prev} work sets this up cleanly —`,
+];
+
+export class CadenceEngine {
+  private completedPhases: string[] = [];
+  private discoveryCount = 0;
+  private readonly discoveryFrequency: number; // emit a discovery every N operations
+
+  constructor(frequency = 4) {
+    this.discoveryFrequency = frequency;
+  }
+
+  // Record a completed phase so we can build continuity bridges
+  recordPhase(label: string) {
+    this.completedPhases.push(label);
+  }
+
+  // Get a micro-discovery if the cadence calls for it
+  tryMicroDiscovery(currentOp: number, seed = ""): string | null {
+    this.discoveryCount++;
+    if (this.discoveryCount % this.discoveryFrequency !== 0) return null;
+    const h = Math.abs(hashStr(seed + String(currentOp)));
+    return MICRO_DISCOVERIES[h % MICRO_DISCOVERIES.length];
+  }
+
+  // Build a continuity bridge from the last completed phase
+  getContinuityBridge(): string | null {
+    if (this.completedPhases.length === 0) return null;
+    const prev = this.completedPhases[this.completedPhases.length - 1];
+    const idx = this.completedPhases.length % CONTINUITY_BRIDGES.length;
+    return CONTINUITY_BRIDGES[idx](prev);
+  }
+
+  // Compute a natural delay for the current phase
+  // Planning = slower/reflective, building = faster/momentum
+  getDelay(phase: string): number {
+    const base: Record<string, number> = {
+      planning:     900,
+      architecture: 450,
+      building:     80,
+      debugging:    1200,
+      finalizing:   200,
+      idle:         0,
+    };
+    const b = base[phase] ?? 400;
+    return b + Math.random() * (b * 0.3);
+  }
+
+  reset() {
+    this.completedPhases = [];
+    this.discoveryCount = 0;
+  }
+}
+
+function hashStr(s: string): number {
+  let h = 0;
+  for (let i = 0; i < s.length; i++) {
+    h = (Math.imul(31, h) + s.charCodeAt(i)) | 0;
+  }
+  return h;
+}
+
 // ── Singleton export ──────────────────────────────────────────────────────────
 // One orchestrator instance for the entire app session.
 
 export const orchestrator = new AIOrchestrator();
+export const cadence = new CadenceEngine();
 export { ExecutionEventBus };
