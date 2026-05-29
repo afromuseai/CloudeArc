@@ -1,7 +1,5 @@
-import { createServer } from "http";
 import app from "./app";
 import { logger } from "./lib/logger";
-import { setupCollab } from "./collab";
 
 const rawPort = process.env["PORT"];
 
@@ -17,10 +15,7 @@ if (Number.isNaN(port) || port <= 0) {
   throw new Error(`Invalid PORT value: "${rawPort}"`);
 }
 
-const httpServer = createServer(app);
-setupCollab(httpServer);
-
-httpServer.listen(port, (err?: Error) => {
+app.listen(port, (err) => {
   if (err) {
     logger.error({ err }, "Error listening on port");
     process.exit(1);

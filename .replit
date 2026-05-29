@@ -18,27 +18,3 @@ expertMode = true
 [postMerge]
 path = "scripts/post-merge.sh"
 timeoutMs = 20000
-
-[[ports]]
-localPort = 8080
-externalPort = 8080
-
-[[ports]]
-localPort = 8081
-externalPort = 8081
-
-[[ports]]
-localPort = 8082
-externalPort = 3000
-
-[[ports]]
-localPort = 23845
-externalPort = 80
-
-[userenv]
-
-[userenv.shared]
-MODEL_CODER = "qwen/qwen3-coder-480b-a35b-instruct"
-MODEL_REASONER = "stepfun-ai/step-3.5-flash"
-MODEL_GENERAL = "mistralai/mistral-large-3-675b-instruct-2512"
-MODEL_FAST = "bytedance/seed-oss-36b-instruct"
