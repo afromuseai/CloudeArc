@@ -1,0 +1,1 @@
+- [Sandpack replaces WebContainer](sandpack-preview.md) — WebContainer can't work in Replit's iframe (no cross-origin isolation); Sandpack bundles React apps via CDN with no SharedArrayBuffer needed.

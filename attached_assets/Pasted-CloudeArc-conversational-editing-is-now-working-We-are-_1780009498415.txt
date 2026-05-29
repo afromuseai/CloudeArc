@@ -1,0 +1,120 @@
+CloudeArc conversational editing is now working.
+
+We are now implementing style intelligence and design memory.
+
+IMPORTANT:
+Do NOT redesign backend architecture.
+Do NOT rebuild runtime systems.
+Do NOT add autonomous agents.
+Do NOT refactor unrelated infrastructure.
+
+Focus ONLY on consistent visual intelligence and design continuity.
+
+TASK:
+
+Implement a design memory + style intelligence system for generations and edits.
+
+GOALS:
+
+1. Persistent design language
+   Generated apps should maintain consistent:
+
+* spacing
+* typography
+* colors
+* shadows
+* border radii
+* animation style
+* layout rhythm
+
+across future edits and generations.
+
+2. Style profile extraction
+   After generation:
+
+* analyze the generated UI style
+* infer:
+
+  * aesthetic type
+  * color palette
+  * typography patterns
+  * spacing density
+  * component style
+  * motion style
+
+3. Preserve design consistency during edits
+   When user says:
+
+* "add a pricing section"
+* "create dashboard"
+* "add testimonials"
+
+new sections should MATCH the existing app style automatically.
+
+4. Add style modes
+   Support generation styles such as:
+
+* modern SaaS
+* minimal
+* futuristic
+* luxury
+* bold startup
+* glassmorphism
+* AI-native
+* editorial
+
+5. Add inspiration-based prompting
+   Allow prompts like:
+
+* "feel similar to Linear"
+* "more like Stripe"
+* "more cinematic"
+* "clean like Apple"
+* "minimal like Notion"
+
+WITHOUT cloning.
+
+Use:
+
+* spacing philosophy
+* motion feel
+* hierarchy style
+* layout composition
+
+6. Design token system
+   Create reusable internal design tokens:
+
+* spacing scale
+* typography scale
+* radius scale
+* shadow scale
+* motion timing
+* color balance
+
+7. Improve edit intelligence
+   Edits should respect:
+
+* current visual language
+* existing section composition
+* component patterns
+* responsiveness
+
+8. Improve premium feel
+   Generated apps should feel:
+
+* intentional
+* cohesive
+* art directed
+* visually balanced
+
+9. Preserve streaming UX and stability.
+
+10. Preserve architecture simplicity
+    NO:
+
+* massive design engines
+* overengineered abstractions
+* unnecessary complexity
+
+Goal:
+CloudeArc should generate and edit apps with a coherent, premium visual identity instead of random AI styling.

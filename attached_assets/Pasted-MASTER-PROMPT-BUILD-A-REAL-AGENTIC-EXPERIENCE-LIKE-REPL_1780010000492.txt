@@ -1,0 +1,450 @@
+MASTER PROMPT — BUILD A REAL AGENTIC EXPERIENCE LIKE REPLIT/CURSOR
+
+You are upgrading my AI app from a normal chatbot into a true autonomous agentic development environment similar to Replit Agent and Cursor.
+
+The goal is NOT just UI.
+
+The goal is:
+
+believable autonomous behavior
+staged execution
+visible reasoning states
+implementation orchestration
+intelligent conversational flow
+real “AI working” feeling
+
+The experience should psychologically feel like:
+
+Replit Agent
+Cursor Agent
+Devin-style orchestration
+autonomous software builder
+
+WITHOUT copying branding.
+
+My current implementation feels like:
+
+a normal chatbot
+fake loading states
+disconnected UI
+no visible execution intelligence
+no believable agent workflow
+
+Fix ALL of that.
+
+CORE PRODUCT BEHAVIOR
+
+The AI must behave like an ACTIVE SOFTWARE AGENT.
+
+NOT like ChatGPT.
+
+The system should:
+
+interpret goals
+plan implementation
+break tasks into stages
+execute progressively
+report progress naturally
+expose reasoning phases
+stream meaningful updates
+feel alive
+
+The user must FEEL:
+“the AI is actually building something.”
+
+CRITICAL UX PRINCIPLES
+1. Conversational Requests ≠ Always Build Requests
+
+Right now:
+EVERY message triggers implementation.
+
+That is WRONG.
+
+The system must classify intent first.
+
+MESSAGE INTENT CLASSIFICATION
+
+Before acting, classify user input into:
+
+A. QUESTION
+
+Examples:
+
+“How does auth work?”
+“What is vector search?”
+“Can you explain this?”
+“Why is this failing?”
+
+Behavior:
+
+respond conversationally
+DO NOT enter build mode
+DO NOT trigger generation UI
+DO NOT create files
+B. IMPLEMENTATION REQUEST
+
+Examples:
+
+“Build a dashboard”
+“Add authentication”
+“Create a pricing page”
+“Implement stripe”
+
+Behavior:
+
+enter autonomous agent mode
+activate liveness system
+activate generation stages
+show execution states
+stream orchestration updates
+C. MODIFICATION REQUEST
+
+Examples:
+
+“Change the navbar”
+“Make this darker”
+“Improve responsiveness”
+
+Behavior:
+
+inspect current app state
+explain intended modification
+execute progressively
+show changed files
+D. DEBUGGING REQUEST
+
+Examples:
+
+“Fix this error”
+“Why is build failing?”
+“This animation is broken”
+
+Behavior:
+
+enter investigation mode
+show diagnosis stages
+show reasoning process
+THEN implement fixes
+AGENT EXECUTION SYSTEM
+
+The AI must operate in STAGES.
+
+NOT one giant loading spinner.
+
+REQUIRED EXECUTION PHASES
+
+Depending on task type, dynamically use stages like:
+
+Thinking
+Understanding Request
+Planning
+Analyzing Existing Codebase
+Designing Architecture
+Creating Components
+Writing Logic
+Connecting State
+Styling Interface
+Optimizing
+Fixing Issues
+Testing
+Finalizing
+
+NEVER show all stages at once.
+
+ONLY show current active stage.
+
+STAGE TRANSITIONS
+
+Transitions must feel:
+
+intelligent
+contextual
+dynamic
+non-repetitive
+
+Examples:
+
+Instead of:
+“Generating…”
+
+Use:
+
+Thinking about component structure…
+Planning authentication flow…
+Creating responsive layout…
+Wiring API handlers…
+Optimizing render performance…
+Fixing TypeScript issues…
+Finalizing interactions…
+
+The stage text should evolve naturally.
+
+AGENT LIVENESS SYSTEM
+
+My uploaded logo is the agent liveness indicator.
+
+DO NOT redesign it.
+
+LOGO ANIMATION RULES
+
+The animation should behave like:
+an intelligent orchestration engine.
+
+NOT a spinner.
+
+The outer blocks move sequentially around the center block.
+
+The movement MUST correlate with execution stages.
+
+Meaning:
+
+movement intensity
+pacing
+pauses
+rhythm
+
+should adapt to:
+
+thinking
+planning
+building
+debugging
+STAGE-BASED MOTION BEHAVIOR
+Thinking
+slow
+subtle
+deliberate
+longer pauses
+Planning
+more active
+exploratory rhythm
+Building
+confident
+continuous motion
+faster sequencing
+Fixing Errors
+irregular pacing
+brief pauses
+recalculation feel
+Finalizing
+smoother
+calming down
+graceful completion
+CRITICAL ANIMATION REQUIREMENTS
+
+The animation MUST:
+
+feel computational
+feel orchestrated
+feel systemic
+feel premium
+
+NOT:
+
+playful
+bouncy
+generic loader
+startup spinner
+
+The center block NEVER moves.
+
+Only the 4 surrounding blocks animate.
+
+The animation should resemble:
+distributed agents coordinating around a core intelligence node.
+
+LIVE CONVERSATIONAL FEEDBACK
+
+The left-side conversation stream should behave like Replit Agent.
+
+NOT like assistant chat bubbles.
+
+REQUIRED FEEDBACK STYLE
+
+The AI should continuously emit:
+
+progress updates
+implementation summaries
+reasoning snippets
+architecture decisions
+discovered issues
+next steps
+
+Examples:
+
+✔ GOOD:
+
+“Analyzing existing routing structure…”
+“Found conflicting Tailwind utilities.”
+“Creating reusable dashboard cards.”
+“Setting up API abstraction layer.”
+“Refactoring layout for mobile responsiveness.”
+
+✘ BAD:
+
+“Working…”
+“Please wait…”
+“Generating…”
+FILE OPERATION VISIBILITY
+
+When building:
+show live operations like:
+
+Creating files
+Updating files
+Refactoring modules
+Installing dependencies
+Running checks
+
+Display them as:
+minimal intelligent activity logs.
+
+Like Replit/Cursor.
+
+THINKING MODE
+
+Implement a REAL visible thinking mode.
+
+When reasoning:
+show subtle temporary thought states like:
+
+Evaluating architecture…
+Comparing implementation strategies…
+Determining component boundaries…
+Reviewing dependencies…
+
+This should feel:
+
+intentional
+intelligent
+believable
+
+NOT fake chain-of-thought dumping.
+
+DO NOT expose raw hidden reasoning.
+
+Only expose polished execution-oriented reasoning summaries.
+
+UI ARCHITECTURE
+
+The UI should have:
+
+LEFT PANEL
+
+Agent conversation/activity stream
+
+MAIN PANEL
+
+Live preview / workspace
+
+TOP STATUS AREA
+
+Current execution stage + animated logo
+
+TOP STATUS BAR BEHAVIOR
+
+Like Replit:
+show:
+
+current stage
+subtle animated progress
+active operation
+
+Examples:
+
+Planning application structure…
+Building responsive components…
+Running validation checks…
+
+This area should continuously evolve.
+
+AGENT MEMORY + CONTEXT
+
+The agent should maintain:
+
+task continuity
+previous architecture decisions
+current implementation state
+user preferences
+
+The system should feel persistent and aware.
+
+AUTONOMOUS FEEL
+
+The AI should:
+
+proactively explain decisions
+suggest improvements
+identify missing pieces
+detect inconsistencies
+continue multi-step execution intelligently
+
+WITHOUT constantly asking for confirmation.
+
+IMPORTANT PSYCHOLOGICAL REQUIREMENT
+
+The system must create the illusion of:
+
+momentum
+intelligence
+depth
+orchestration
+active computation
+
+The user should feel:
+“this AI is truly operating a development environment.”
+
+NOT:
+“I sent a prompt to a chatbot.”
+
+VISUAL STYLE
+
+Maintain:
+
+dark premium interface
+minimal aesthetics
+subtle contrast
+high-end developer tooling feel
+
+Inspired by:
+
+Replit
+Linear
+Cursor
+Vercel
+Raycast
+
+But NOT copied.
+
+IMPLEMENTATION REQUIREMENTS
+
+Use:
+
+React
+TypeScript
+Framer Motion
+Tailwind
+
+Architecture must be:
+
+modular
+scalable
+production-ready
+IMPORTANT
+
+DO NOT:
+
+fake everything with timers
+show meaningless loading
+animate randomly
+overuse motion
+make the UI noisy
+
+The intelligence must feel contextual.
+
+The orchestration must feel believable.
+
+The execution flow must feel alive.
+
+MOST IMPORTANT:
+Keep my logo identity EXACTLY unchanged while transforming it into a premium AI orchestration liveness system.

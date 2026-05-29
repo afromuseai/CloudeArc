@@ -1,0 +1,111 @@
+CloudeArc live streaming generation is now working.
+
+We are now implementing conversational visual editing.
+
+IMPORTANT:
+Do NOT redesign architecture.
+Do NOT rebuild the runtime.
+Do NOT add multi-agent orchestration.
+Do NOT refactor unrelated systems.
+
+Focus ONLY on enabling precise conversational edits to generated apps.
+
+TASK:
+
+Implement targeted AI editing instead of full regeneration.
+
+GOALS:
+
+1. Support natural edit requests
+   Examples:
+
+* "make the navbar smaller"
+* "change hero section to dark mode"
+* "move pricing above testimonials"
+* "add a glowing gradient"
+* "make buttons more rounded"
+* "improve mobile spacing"
+* "make it feel more premium"
+
+2. Detect targeted edit intent
+   System should determine:
+
+* which files are affected
+* which components are affected
+* whether change is:
+
+  * style
+  * layout
+  * typography
+  * animation
+  * structure
+  * content
+
+3. Partial file editing
+   Avoid full regeneration whenever possible.
+
+Instead:
+
+* modify only affected files
+* preserve unrelated components
+* preserve app structure
+* preserve user edits
+
+4. Add patch-based editing flow
+   Support:
+
+* targeted replacements
+* section updates
+* component rewrites
+* style updates
+
+Without regenerating the entire app.
+
+5. Improve UX feedback
+   Show live edit tasks:
+
+* Updating hero section...
+* Adjusting navbar spacing...
+* Improving mobile layout...
+* Applying premium styling...
+
+6. Progressive live updates
+   Edits should:
+
+* stream progressively
+* update preview live
+* feel instantaneous when possible
+
+7. Preserve generation stability
+   Prevent:
+
+* accidental full app rewrites
+* unrelated component deletion
+* broken imports
+* duplicated sections
+
+8. Add edit context awareness
+   AI should understand:
+
+* current project structure
+* existing components
+* current design language
+* current styling patterns
+
+9. Monaco integration
+   When edits occur:
+
+* modified files update live in editor
+* preserve cursor stability if possible
+* highlight changed files visually
+
+10. Preserve current architecture simplicity
+    NO:
+
+* sync-engine complexity
+* overengineered AST systems
+* autonomous agents
+* unnecessary abstractions
+
+Goal:
+CloudeArc should feel like an intelligent AI product designer that can iteratively refine apps through conversation.

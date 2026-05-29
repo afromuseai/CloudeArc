@@ -1,0 +1,234 @@
+MASTER PROMPT — AGENT LIVENESS ANIMATION
+
+You are implementing an AI generation “agent liveness” animation for my existing logo.
+
+CRITICAL:
+
+DO NOT redesign the logo.
+DO NOT change proportions.
+DO NOT change colors.
+DO NOT add glow, gradients, shadows, morphing, scaling, rotation, blur, or extra effects.
+Preserve the exact geometric style and minimal aesthetic of the logo.
+The animation must feel premium, intelligent, subtle, and system-native like Replit’s generation indicator.
+Logo Structure
+
+The logo contains:
+
+1 fixed center square block
+4 surrounding blocks positioned diagonally around the center:
+top-left L-shaped block
+top-right square block
+bottom-left square block
+bottom-right L-shaped block
+
+The center square NEVER moves.
+
+The 4 outer blocks animate independently.
+
+Animation Behavior
+
+The animation represents “thinking / generation in progress”.
+
+The movement pattern must imitate a smooth orbital mechanical motion.
+
+IMPORTANT MOTION RULES
+1. Sequential Motion Only
+
+The four blocks MUST NOT move simultaneously.
+
+Only ONE block moves at a time.
+
+Order:
+
+top-left
+bottom-left
+bottom-right
+top-right
+
+Then reverse direction back to original positions:
+5. top-right
+6. bottom-right
+7. bottom-left
+8. top-left
+
+Loop forever while generation is active.
+
+Direction Rules
+Phase A — Anti-Clockwise Compression
+
+Each block moves anti-clockwise toward the center block.
+
+The motion should feel like:
+
+sliding
+docking
+mechanically aligning edge-to-edge
+
+The moving block should:
+
+partially overlap the orbital path
+touch the center block precisely at the edge
+maintain orientation
+NOT rotate
+
+The vertex/open corner of each L-shaped block must continue facing the center.
+
+No shape transformation allowed.
+
+Phase B — Clockwise Return
+
+After all four blocks have completed the inward anti-clockwise movement:
+
+Each block returns one-by-one clockwise back to its original position.
+
+Same order reversed:
+
+top-right
+bottom-right
+bottom-left
+top-left
+
+The return motion must:
+
+retrace smoothly
+preserve spacing
+preserve geometry
+feel elastic-free and controlled
+Timing
+Motion Characteristics
+Smooth
+Precise
+Mechanical
+Intelligent
+Calm
+Premium
+
+Avoid:
+
+bouncy easing
+playful motion
+spring physics
+exaggerated curves
+
+Use:
+
+cubic-bezier easing
+subtle acceleration/deceleration
+consistent timing
+Timing Specs
+
+Each block:
+
+move duration: 280ms–420ms
+slight pause after docking: 80ms
+next block starts after previous completes
+
+Full loop:
+~3–4 seconds total
+
+Infinite repeat while generation state is active.
+
+Technical Requirements
+
+Implement using:
+
+React
+Framer Motion preferred
+OR pure CSS keyframes if cleaner
+
+Must support:
+
+dark backgrounds
+scalable SVG rendering
+responsive sizing
+high FPS performance
+
+Use transform-based animation only:
+
+translateX
+translateY
+
+Do NOT animate:
+
+width
+height
+border-radius
+opacity
+Visual Integrity Requirements
+
+The logo must remain visually identical to the uploaded design.
+
+Maintain:
+
+exact spacing
+exact corner radii
+exact alignment
+exact color palette
+exact block sizes
+
+The animation should feel like the ORIGINAL logo became alive — not like a redesigned loading spinner.
+
+UX Behavior
+
+Animation only appears:
+
+while AI generation is running
+processing
+streaming
+thinking
+
+Animation stops immediately when generation completes.
+
+When stopping:
+
+smoothly finish current motion
+return all blocks to original resting positions
+
+No abrupt snapping.
+
+Desired Emotional Feel
+
+The animation should communicate:
+
+active intelligence
+orchestration
+agent collaboration
+distributed reasoning
+calm computation
+modern AI infrastructure
+
+Reference feel:
+
+Replit AI generation indicator
+Linear
+Vercel
+premium developer tooling
+
+But KEEP MY ORIGINAL LOGO STYLE unchanged.
+
+Deliverables
+
+Generate:
+
+Animated SVG or React component
+Clean reusable component architecture
+Easy start/stop API
+Minimal performant animation logic
+Production-ready implementation
+Accessible implementation
+Tailwind-compatible styling
+Dark-mode optimized rendering
+
+Name component:
+AgentLivenessIndicator
+
+Props:
+
+{
+  active?: boolean
+  size?: number
+  className?: string
+}
+
+Priority:
+VISUAL FIDELITY TO MY LOGO > animation complexity.
