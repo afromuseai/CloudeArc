@@ -183,7 +183,19 @@ router.post("/preview", async (req, res) => {
       const relative = path.startsWith("/") ? path.slice(1) : path;
       const fullPath = join(tmpDir, relative);
       mkdirSync(dirname(fullPath), { recursive: true });
-      writeFileSync(fullPath, content, "utf-8");
+      // Rewrite old ReactDOM default-import pattern to named createRoot import.
+      // LLMs sometimes emit `import ReactDOM from "react-dom/client"` +
+      // `ReactDOM.createRoot(...)` but react-dom/client has no default export.
+      let fixedContent = content;
+      if (/main\.[jt]sx?$/.test(path)) {
+        fixedContent = fixedContent
+          .replace(
+            /import\s+ReactDOM\s+from\s+["']react-dom\/client["']/g,
+            'import { createRoot } from "react-dom/client"',
+          )
+          .replace(/ReactDOM\.createRoot\(/g, "createRoot(");
+      }
+      writeFileSync(fullPath, fixedContent, "utf-8");
     }
 
     // Stub any imported files that weren't generated at all

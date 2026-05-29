@@ -502,7 +502,7 @@ ${templateConfig.tailwindConfig}
 FILE STRUCTURE:
 - /index.html — charset, viewport, Google Fonts <link> tags, title, meta description
 - /src/styles/globals.css — ONLY: @font-face or font imports if needed + body { font-family } + minimal resets. Keep it tiny.
-- /src/main.jsx — imports './styles/globals.css', mounts <App /> with ReactDOM.createRoot
+- /src/main.jsx — imports './styles/globals.css', mounts <App /> using: import { createRoot } from "react-dom/client"; createRoot(document.getElementById("root")).render(<React.StrictMode><App /></React.StrictMode>)
 - /src/App.jsx — imports all components + adds IntersectionObserver for .reveal class (adds 'opacity-100 translate-y-0' when visible, initial classes are 'opacity-0 translate-y-8 transition-all duration-700')
 - /src/components/Navbar.jsx — sticky navbar
 - /src/components/Hero.jsx — hero section
@@ -717,7 +717,7 @@ ${templateConfig.fonts}
 EXECUTION CHECKLIST — every item is required:
 □ /index.html — proper <title>, meta description matching the app, Google Fonts links
 □ /src/styles/globals.css — body font-family only, tiny file
-□ /src/main.jsx — import globals.css, ReactDOM.createRoot mount
+□ /src/main.jsx — import globals.css, use named import: import { createRoot } from "react-dom/client"; createRoot(document.getElementById("root")).render(...)
 □ /src/App.jsx — compose all sections + IntersectionObserver for elements with class "reveal"
 □ Navbar — sticky top-0 z-50 backdrop-blur, logo + nav links + CTA button, useState mobile menu toggle that works
 □ Hero — eyebrow badge pill, large headline (text-5xl md:text-7xl) with gradient on 1-2 words using bg-clip-text, subtitle, 2 CTA buttons, visual element (SVG illustration or mockup)
