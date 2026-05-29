@@ -3,6 +3,7 @@ import { useEffect, useState, useRef, useCallback } from "react";
 import { useLocation } from "wouter";
 import { AgentLivenessIndicator, type ExecutionStage } from "../components/AgentLivenessIndicator";
 import { ThoughtBlock, type ThoughtBlockData } from "../components/ThoughtBlock";
+import { DiffPreview } from "../components/DiffPreview";
 import { orchestrator } from "../lib/orchestrator";
 import debounce from "lodash/debounce";
 import { zipSync, strToU8 } from "fflate";
@@ -185,6 +186,7 @@ type Step = {
   path?: string;
   state: StepState;
   enteredAt: number;
+  diff?: { oldContent?: string; newContent: string };
 };
 
 type TaskCard = {
@@ -321,33 +323,54 @@ function ThinkingDots() {
 }
 
 function StepRow({ step }: { step: Step }) {
+  const [expanded, setExpanded] = useState(false);
   const color = step.path ? fileTypeColor(step.path) : "#94a3b8";
+  const hasDiff = step.state === "done" && !!step.diff;
   return (
-    <div
-      className="ca-step-row flex items-start gap-2 text-xs py-[3px]"
-      style={{ animationDelay: "0ms" }}
-    >
-      <span className="mt-[1px] shrink-0 w-3.5 flex justify-center">
-        {step.state === "running" && <Spinner size={10} dim />}
-        {step.state === "done" && <span className="text-zinc-600 text-[10px] leading-none">✓</span>}
-        {step.state === "error" && <span className="text-red-500 text-[10px] leading-none">✗</span>}
-      </span>
+    <div className="ca-step-row" style={{ animationDelay: "0ms" }}>
+      <div
+        className={`flex items-start gap-2 text-xs py-[3px] ${hasDiff ? "cursor-pointer select-none" : ""}`}
+        onClick={() => hasDiff && setExpanded((e) => !e)}
+      >
+        <span className="mt-[1px] shrink-0 w-3.5 flex justify-center">
+          {step.state === "running" && <Spinner size={10} dim />}
+          {step.state === "done" && <span className="text-zinc-600 text-[10px] leading-none">✓</span>}
+          {step.state === "error" && <span className="text-red-500 text-[10px] leading-none">✗</span>}
+        </span>
 
-      <span className={`flex-1 leading-relaxed ${
-        step.state === "running" ? "text-zinc-300" :
-        step.state === "done"    ? "text-zinc-600" :
-        "text-red-400"
-      }`}>
-        {step.text}
-        {step.path && (
-          <span
-            className="ml-1.5 font-mono text-[10px] opacity-60"
-            style={{ color }}
-          >
-            {shortPath(step.path)}
+        <span className={`flex-1 leading-relaxed ${
+          step.state === "running" ? "text-zinc-300" :
+          step.state === "done"    ? "text-zinc-600" :
+          "text-red-400"
+        }`}>
+          {step.text}
+          {step.path && (
+            <span
+              className="ml-1.5 font-mono text-[10px] opacity-60"
+              style={{ color }}
+            >
+              {shortPath(step.path)}
+            </span>
+          )}
+        </span>
+
+        {hasDiff && (
+          <span className="shrink-0 text-[9px] text-zinc-700 mt-[2px]">
+            {expanded ? "▴" : "▾"}
           </span>
         )}
-      </span>
+      </div>
+
+      {expanded && step.diff && step.path && (
+        <div className="ml-3.5 mb-1 mt-0.5">
+          <DiffPreview
+            path={step.path}
+            oldContent={step.diff.oldContent}
+            newContent={step.diff.newContent}
+            maxLines={14}
+          />
+        </div>
+      )}
     </div>
   );
 }
@@ -975,11 +998,11 @@ export default function WorkspacePage({ params }: { params: { id: string } }) {
   );
 
   const resolveStep = useCallback(
-    (taskId: number, stepId: number, state: StepState, newText?: string) => {
+    (taskId: number, stepId: number, state: StepState, newText?: string, diff?: Step["diff"]) => {
       updateTask(taskId, (t) => ({
         ...t,
         steps: t.steps.map((s) =>
-          s.id === stepId ? { ...s, state, text: newText ?? s.text } : s
+          s.id === stepId ? { ...s, state, text: newText ?? s.text, ...(diff ? { diff } : {}) } : s
         ),
       }));
     },
@@ -1430,6 +1453,9 @@ export default function WorkspacePage({ params }: { params: { id: string } }) {
             activateRealMode();
             const { path, content } = payload as { path: string; content: string };
 
+            // Capture old content before we overwrite — used for diff preview
+            const oldContent = localFiles[path] ?? filesRef.current[path];
+
             updateTask(taskId, (t) => ({
               ...t,
               executionStage: "building",
@@ -1454,7 +1480,7 @@ export default function WorkspacePage({ params }: { params: { id: string } }) {
               });
             }, 2000);
 
-            resolveStep(taskId, sid, "done");
+            resolveStep(taskId, sid, "done", undefined, { oldContent, newContent: content });
             orchestrator.fileEdited(path);
             written++;
             const finalWritten = written;
