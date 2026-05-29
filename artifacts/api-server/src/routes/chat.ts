@@ -7,6 +7,15 @@ import {
   buildStyleProfile,
   type StyleProfile,
 } from "../lib/styleMemory";
+import {
+  buildPlannerSystemPrompt,
+  buildArchitectSystemPrompt,
+  buildNarrativeFromSteps,
+  buildArchNarrative,
+  fallbackPlanningThought,
+  fallbackArchThought,
+  type ThoughtBlock,
+} from "../lib/promptOrchestrator";
 
 const router = Router();
 
@@ -59,6 +68,14 @@ function sseError(res: Response, message: string) {
 
 function sseNarrative(res: Response, text: string, stage: "understanding" | "planning" | "building" | "done") {
   sseSend(res, "narrative", { text, stage });
+}
+
+function sseThought(res: Response, thought: ThoughtBlock) {
+  sseSend(res, "thought", thought);
+}
+
+function sseMomentum(res: Response, currentTask: string, subtask: string | null) {
+  sseSend(res, "momentum", { currentTask, subtask });
 }
 
 // ── JSON / parsing helpers ───────────────────────────────────────────────────
@@ -552,33 +569,61 @@ router.post("/", async (req: Request, res: Response) => {
     `On it — I'll build a ${templateType} for you with the ${styleProfile.label} aesthetic.${inspirationNote} Let me think through the structure before I start writing anything.`,
     "understanding"
   );
+  sseMomentum(res, `Building ${templateType}`, "Understanding requirements");
   sseStage(res, `Thinking through the ${templateType} structure...`);
 
-  // ── Stage 1: Plan (Reasoner agent) ─────────────────────────────────────────
-  let steps: string[];
+  // ── Stage 1: Plan + thought blocks (Reasoner agent) ──────────────────────
+  let steps: string[] = [];
+  let planningThought: ThoughtBlock | null = null;
+
   try {
     sseStage(res, "Mapping component hierarchy and data flow...");
+    sseMomentum(res, `Building ${templateType}`, "Decomposing into implementation steps");
+
     const planRaw = await callModel(
       REASONER_MODEL,
-      `You are a planning agent. Break the user request into 2-4 concrete implementation steps.
-Return ONLY valid JSON: { "steps": ["step 1", "step 2"] }
-No markdown, no explanation. No <think> tags.`,
-      prompt,
+      buildPlannerSystemPrompt(),
+      `Build this app: ${prompt}\nTemplate type: ${templateType}\nStyle: ${styleProfile.label}`,
       apiKey,
       log,
       "plan",
       PLAN_TIMEOUT_MS,
+      6000,
     );
-    steps = parseJson(cleanJson(planRaw)).steps ?? [];
+
+    try {
+      const parsed = parseJson(cleanJson(planRaw));
+      steps = parsed.steps ?? [];
+
+      // Extract planning thought block
+      if (parsed.planningThought) {
+        planningThought = {
+          title: parsed.planningThought.title ?? `Planning ${templateType} architecture`,
+          estimatedDuration: parsed.planningThought.estimatedDuration ?? "—",
+          reasoning: parsed.planningThought.reasoning ?? "",
+          strategy: parsed.planningThought.strategy ?? "",
+          insights: parsed.planningThought.insights ?? [],
+          phase: "planning",
+        };
+      }
+    } catch (parseErr: any) {
+      log.warn({ parseErr: parseErr.message }, "Failed to parse enriched plan — falling back");
+      // Try to extract just steps from raw text
+      try {
+        const fallback = parseJson(cleanJson(planRaw));
+        steps = fallback.steps ?? [];
+      } catch { /* use empty steps */ }
+    }
+
+    if (!planningThought) {
+      planningThought = fallbackPlanningThought(templateType, steps);
+    }
+
+    // Emit thought block BEFORE the plan narrative
+    sseThought(res, planningThought);
+
     if (steps.length) {
-      // Convert numbered steps into natural narrative
-      const first = steps[0].replace(/^(step \d+:?\s*|first[,:]?\s*)/i, "").replace(/^\w/, c => c.toLowerCase());
-      const rest  = steps.slice(1).map(s => s.replace(/^(step \d+:?\s*|then[,:]?\s*)/i, "").replace(/^\w/, c => c.toLowerCase()));
-      const planText = rest.length === 0
-        ? `My plan: ${first}.`
-        : rest.length === 1
-          ? `I'll start by ${first}, then ${rest[0]}.`
-          : `I'll start by ${first}, then ${rest.slice(0, -1).join(", ")} — finishing with ${rest[rest.length - 1]}.`;
+      const planText = buildNarrativeFromSteps(steps);
       sseNarrative(res, planText, "planning");
     }
   } catch (err: any) {
@@ -587,7 +632,7 @@ No markdown, no explanation. No <think> tags.`,
     return;
   }
 
-  // ── Stage 2: Architect (Reasoner agent) ────────────────────────────────────
+  // ── Stage 2: Architect + thought blocks (Reasoner agent) ──────────────────
   const coreFiles = [
     "/index.html",
     "/src/styles/globals.css",
@@ -596,27 +641,47 @@ No markdown, no explanation. No <think> tags.`,
   ];
 
   let sectionComponents: string[] = [];
+  let archThought: ThoughtBlock | null = null;
+
   try {
     sseStage(res, "Resolving component list...");
+    sseMomentum(res, `Building ${templateType}`, "Mapping component architecture");
+
     const archRaw = await callModel(
       REASONER_MODEL,
-      `You are an architecture agent. List React component files to create for a "${templateType}" site.
-The project already has: ${coreFiles.join(", ")}
-Based on the required sections, output additional component file paths under /src/components/.
-Return ONLY valid JSON: { "components": ["/src/components/Navbar.jsx", "/src/components/Hero.jsx"] }
-Include one file per major section. No markdown, no explanation. No <think> tags.`,
+      buildArchitectSystemPrompt(templateType),
       JSON.stringify({ steps, templateType, sections: templateConfig.sections, userRequest: prompt }),
       apiKey,
       log,
       "architect",
       ARCH_TIMEOUT_MS,
+      4096,
     );
-    const parsed = parseJson(cleanJson(archRaw));
-    sectionComponents = (parsed.components ?? []).filter(
-      (f: string) => f.startsWith("/src/components/") && f.endsWith(".jsx"),
-    );
+
+    try {
+      const parsed = parseJson(cleanJson(archRaw));
+      sectionComponents = (parsed.components ?? []).filter(
+        (f: string) => f.startsWith("/src/components/") && f.endsWith(".jsx"),
+      );
+
+      if (parsed.architecturalThought) {
+        archThought = {
+          title: parsed.architecturalThought.title ?? "Component structure resolved",
+          estimatedDuration: parsed.architecturalThought.estimatedDuration ?? "—",
+          reasoning: parsed.architecturalThought.reasoning ?? "",
+          strategy: parsed.architecturalThought.strategy ?? "",
+          insights: parsed.architecturalThought.insights ?? [],
+          phase: "architecture",
+        };
+      }
+    } catch (parseErr: any) {
+      log.warn({ parseErr: parseErr.message }, "Architect parse failed — using defaults");
+    }
   } catch (err: any) {
     log.warn({ err: err.message }, "Architect stage failed — using defaults");
+  }
+
+  if (!sectionComponents.length) {
     sectionComponents = [
       "/src/components/Navbar.jsx",
       "/src/components/Hero.jsx",
@@ -625,20 +690,19 @@ Include one file per major section. No markdown, no explanation. No <think> tags
       "/src/components/Footer.jsx",
     ];
   }
+  if (!archThought) {
+    archThought = fallbackArchThought(sectionComponents);
+  }
 
   const allFiles = [...coreFiles, ...sectionComponents];
   log.info({ files: allFiles }, "Architecture resolved");
 
-  // Natural-language architecture narrative
-  const compNames = sectionComponents.map(f => f.split("/").pop()!.replace(".jsx", ""));
-  const firstTwo  = compNames.slice(0, 2).join(" and ");
-  const remaining = compNames.slice(2);
-  const archNarrative = compNames.length === 0
-    ? `I'm working with ${allFiles.length} files total. Kicking off the build now.`
-    : remaining.length === 0
-      ? `I'm working with ${allFiles.length} files. I'll nail ${firstTwo} first to establish the visual direction, then fill in the rest.`
-      : `I'm working with ${allFiles.length} files. I'll lock in ${firstTwo} first — that sets the visual language — then move through ${remaining.join(", ")}. Starting the build.`;
+  // Emit architectural thought block + narrative
+  sseThought(res, archThought);
+
+  const archNarrative = buildArchNarrative(coreFiles, sectionComponents, allFiles);
   sseNarrative(res, archNarrative, "building");
+  sseMomentum(res, `Building ${templateType}`, `Writing ${allFiles.length} files`);
   sseStage(res, `Writing ${allFiles.length} files...`);
 
   // ── Stage 3: Code generation (Coder agent — streaming) ─────────────────────

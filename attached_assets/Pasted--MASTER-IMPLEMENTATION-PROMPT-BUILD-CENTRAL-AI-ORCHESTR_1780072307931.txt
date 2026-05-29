@@ -1,0 +1,333 @@
+# MASTER IMPLEMENTATION PROMPT — BUILD CENTRAL AI ORCHESTRATOR RUNTIME
+
+We need to stop treating the app like:
+“chat input → AI response.”
+
+And instead architect it as:
+a real-time AI orchestration runtime.
+
+The current system still feels fragmented because:
+
+* planning
+* narration
+* execution
+* operations
+* liveness
+* UI updates
+
+all behave like separate disconnected features.
+
+Re-architect the app around ONE central runtime:
+
+# AIOrchestrator
+
+This becomes the single source of truth for ALL AI activity.
+
+---
+
+# CORE ARCHITECTURE REQUIREMENT
+
+The orchestrator must coordinate:
+
+* user intent
+* execution stages
+* planning thoughts
+* narrative messages
+* operation events
+* file changes
+* liveness animation
+* completion summaries
+* memory continuity
+
+NO isolated local execution logic anymore.
+
+Everything must flow through:
+AIOrchestrator.
+
+---
+
+# CREATE A CENTRAL EVENT SYSTEM
+
+The app needs a structured event-driven runtime.
+
+Create:
+ExecutionEventBus
+
+Every AI activity emits structured events.
+
+Example event types:
+
+* intent_detected
+* planning_started
+* thought_generated
+* narrative_generated
+* file_opened
+* file_edited
+* operation_started
+* operation_completed
+* stage_changed
+* validation_started
+* build_completed
+* task_finished
+
+The UI should SUBSCRIBE to these events.
+
+NOT generate fake UI states independently.
+
+---
+
+# IMPORTANT:
+
+# SEPARATE THINKING FROM EXECUTION
+
+This is one of the biggest missing pieces.
+
+The app currently merges:
+
+* planning
+* execution
+* narration
+
+into one stream.
+
+Separate them.
+
+Create distinct layers:
+
+1. THINKING LAYER
+   Internal reasoning summaries.
+   Collapsible brain/thought blocks.
+
+2. NARRATIVE LAYER
+   Natural teammate-style conversational updates.
+
+3. OPERATION LAYER
+   File edits, builds, diffs, validations.
+
+4. EXECUTION LAYER
+   Actual coding tasks.
+
+These layers should interact but remain distinct systems.
+
+---
+
+# IMPLEMENT PLANNING THOUGHT BLOCKS
+
+The collapsible brain sections are CRITICAL.
+
+These create perceived intelligence depth.
+
+Each major execution phase should generate:
+
+* a planning title
+* reasoning summary
+* implementation strategy
+* architectural insight
+
+Example:
+
+Planning dashboard architecture (48 seconds)
+
+Inside:
+
+* why certain files matter
+* implementation order
+* tradeoffs
+* discovered issues
+* execution strategy
+
+IMPORTANT:
+These are CURATED reasoning summaries.
+NOT raw chain-of-thought.
+
+The tone should feel:
+
+* intelligent
+* thoughtful
+* engineering-oriented
+* collaborative
+
+---
+
+# CRITICAL:
+
+# BUILD A PROMPT REWRITING LAYER
+
+This is likely the biggest missing architecture piece.
+
+The user prompt should NOT directly reach the execution model.
+
+Create:
+PromptOrchestrator
+
+Flow becomes:
+
+User Input
+→ Intent Analyzer
+→ Prompt Rewriter
+→ Task Architect
+→ Narrative Planner
+→ Execution Agent
+
+The Prompt Rewriter should:
+
+* clarify vague requests
+* infer architecture
+* structure execution goals
+* rewrite requests into implementation-ready tasks
+* generate conversational context
+
+Example:
+
+User:
+“Build a finance dashboard.”
+
+Rewritten internally as:
+
+* create dashboard shell
+* establish sidebar layout
+* implement analytics cards
+* create chart system
+* establish responsive spacing
+* maintain premium fintech aesthetic
+* narrate progress conversationally
+
+This rewritten orchestration context should drive execution.
+
+---
+
+# BUILD A NARRATIVE ENGINE
+
+Create:
+NarrativeOrchestrator
+
+This is NOT logging.
+
+This is conversational collaboration.
+
+The AI should sound like:
+a real engineer thinking while building.
+
+Examples:
+
+GOOD:
+
+* “I’m restructuring the sidebar first because the current layout will make responsiveness harder later.”
+* “The hero section is stable now, so I’m connecting the remaining sections to that spacing system.”
+* “I found a cleaner component structure for this.”
+
+BAD:
+
+* “Executing phase 2.”
+* “Building components.”
+* “Writing files.”
+
+The narrative should:
+
+* reference prior actions
+* explain decisions
+* maintain continuity
+* sound human
+* feel collaborative
+
+---
+
+# BUILD OPERATIONAL REALISM
+
+File operations must become:
+secondary contextual metadata.
+
+Show:
+
+* opened files
+* edited files
+* diffs
+* validations
+* rebuilds
+
+But NEVER let operation logs dominate the experience.
+
+Narrative is primary.
+Operations are secondary.
+
+Target ratio:
+70% narrative
+30% operations
+
+---
+
+# IMPLEMENT DIFF PREVIEW SYSTEM
+
+When files change:
+show compact diffs.
+
+Example:
+diff: workspace.tsx
+
+Only show:
+
+* modified sections
+* replaced lines
+* inserted lines
+
+NOT entire files.
+
+The user should feel:
+the AI is actively editing a live workspace.
+
+---
+
+# CRITICAL UX REQUIREMENT
+
+The app must create:
+COGNITIVE MOMENTUM.
+
+The AI should feel like:
+it is progressing through work.
+
+Not restarting after every message.
+
+The orchestrator should track:
+
+* current task
+* active subtask
+* completed operations
+* pending actions
+* discovered issues
+* architecture decisions
+
+This continuity is ESSENTIAL.
+
+---
+
+# LIVENESS INTEGRATION
+
+The liveness animation must become:
+execution-aware.
+
+The animation should react to:
+
+* planning
+* thinking
+* building
+* debugging
+* validating
+* finalizing
+
+The animation is NOT a loader.
+
+It is a visualization of orchestration activity.
+
+---
+
+# FINAL GOAL
+
+The app should stop feeling like:
+a chatbot with generation UI.
+
+And start feeling like:
+a real-time AI operating runtime with visible cognition, conversational collaboration, and live execution orchestration.
+
+MOST IMPORTANT:
+Build the orchestration architecture FIRST.
+Not isolated UI patches.

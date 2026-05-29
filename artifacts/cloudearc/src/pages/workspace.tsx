@@ -2,6 +2,8 @@ import Editor from "@monaco-editor/react";
 import { useEffect, useState, useRef, useCallback } from "react";
 import { useLocation } from "wouter";
 import { AgentLivenessIndicator, type ExecutionStage } from "../components/AgentLivenessIndicator";
+import { ThoughtBlock, type ThoughtBlockData } from "../components/ThoughtBlock";
+import { orchestrator } from "../lib/orchestrator";
 import debounce from "lodash/debounce";
 import { zipSync, strToU8 } from "fflate";
 import {
@@ -218,7 +220,13 @@ type ConverseBubble = {
   loading: boolean;
 };
 
-type FeedItem = UserBubble | TaskCard | NarrativeMessage | ConverseBubble;
+type ThoughtBlockItem = {
+  kind: "thought";
+  id: number;
+  data: ThoughtBlockData;
+};
+
+type FeedItem = UserBubble | TaskCard | NarrativeMessage | ConverseBubble | ThoughtBlockItem;
 
 // ─── inline styles injected once ────────────────────────────────────────────
 
@@ -817,6 +825,10 @@ export default function WorkspacePage({ params }: { params: { id: string } }) {
   const [newFileName, setNewFileName] = useState<string | null>(null);
   const newFileInputRef = useRef<HTMLInputElement | null>(null);
   const myUser = useRef<CollabUser>(getMyUser());
+  const [momentum, setMomentum] = useState<{ currentTask: string | null; subtask: string | null }>({
+    currentTask: null,
+    subtask: null,
+  });
   const [styleProfile, setStyleProfile] = useState<{
     mode: string;
     label: string;
@@ -1245,6 +1257,10 @@ export default function WorkspacePage({ params }: { params: { id: string } }) {
     setFeed((prev) => [...prev, userBubble, taskCard]);
     const taskId = taskCard.id;
 
+    // Wire orchestrator — single source of truth for all AI activity
+    orchestrator.startTask(taskLabel, initStage);
+    setMomentum({ currentTask: taskLabel, subtask: null });
+
     if (intent === "debug") {
       startDebugThinkingPhase(taskId);
     } else if (intent === "modify") {
@@ -1338,6 +1354,33 @@ export default function WorkspacePage({ params }: { params: { id: string } }) {
           let payload: any;
           try { payload = JSON.parse(rawData); } catch { continue; }
 
+          // ── thought block ────────────────────────────────────────
+          if (eventType === "thought") {
+            activateRealMode();
+            const thoughtItem: ThoughtBlockItem = {
+              kind: "thought",
+              id: uid(),
+              data: {
+                title:             payload.title             ?? "Planning",
+                estimatedDuration: payload.estimatedDuration ?? "—",
+                reasoning:         payload.reasoning         ?? "",
+                strategy:          payload.strategy          ?? "",
+                insights:          Array.isArray(payload.insights) ? payload.insights as string[] : [],
+                phase:             (payload.phase as ThoughtBlockData["phase"]) ?? "planning",
+              },
+            };
+            setFeed((prev) => [...prev, thoughtItem]);
+            orchestrator.recordThought(thoughtItem.data);
+          }
+
+          // ── momentum ─────────────────────────────────────────────
+          if (eventType === "momentum") {
+            const ct = payload.currentTask as string | null ?? null;
+            const st = payload.subtask as string | null ?? null;
+            setMomentum({ currentTask: ct, subtask: st });
+            orchestrator.setSubtask(st ?? "");
+          }
+
           // ── narrative ────────────────────────────────────────────────
           if (eventType === "narrative") {
             activateRealMode();
@@ -1348,6 +1391,7 @@ export default function WorkspacePage({ params }: { params: { id: string } }) {
               stage: payload.stage ?? "understanding",
             };
             setFeed((prev) => [...prev, narrativeMsg]);
+            orchestrator.recordNarrative(payload.text ?? "", payload.stage ?? "understanding");
           }
 
           // ── stage ────────────────────────────────────────────────────
@@ -1411,6 +1455,7 @@ export default function WorkspacePage({ params }: { params: { id: string } }) {
             }, 2000);
 
             resolveStep(taskId, sid, "done");
+            orchestrator.fileEdited(path);
             written++;
             const finalWritten = written;
             updateTask(taskId, (t) => ({ ...t, fileCount: finalWritten }));
@@ -1442,9 +1487,13 @@ export default function WorkspacePage({ params }: { params: { id: string } }) {
                 intent === "modify" ? `Edits applied — preview updated.${failNote}` :
                 `Your ${describePrompt(userPrompt)} is live in the preview.${failNote}`;
               finishTask(taskId, "done", doneMsg);
+              orchestrator.finishTask(doneMsg);
             } else {
-              finishTask(taskId, "done", `Generation complete${failNote}. Preview failed to bundle — check the Logs tab.`);
+              const noPreviewMsg = `Generation complete${failNote}. Preview failed to bundle — check the Logs tab.`;
+              finishTask(taskId, "done", noPreviewMsg);
+              orchestrator.finishTask(noPreviewMsg);
             }
+            setMomentum({ currentTask: null, subtask: null });
             break outer;
           }
 
@@ -1457,7 +1506,10 @@ export default function WorkspacePage({ params }: { params: { id: string } }) {
                 s.state === "running" ? { ...s, state: "error" } : s
               ),
             }));
-            finishTask(taskId, "error", payload.message ?? "Generation failed.");
+            const errMsg = payload.message ?? "Generation failed.";
+            finishTask(taskId, "error", errMsg);
+            orchestrator.finishTask(errMsg);
+            setMomentum({ currentTask: null, subtask: null });
             break outer;
           }
         }
@@ -1547,7 +1599,7 @@ export default function WorkspacePage({ params }: { params: { id: string } }) {
 
       {/* AI PANEL */}
       <aside className="w-80 bg-[#111111] flex flex-col border-r border-white/[0.04] shrink-0">
-        {/* Live phase header — switches between idle and active states */}
+        {/* Live phase header — execution-aware with momentum continuity */}
         {(() => {
           const activeTask = [...feed].reverse().find(
             (i): i is TaskCard =>
@@ -1556,32 +1608,55 @@ export default function WorkspacePage({ params }: { params: { id: string } }) {
           if (activeTask) {
             const phase = PHASE_META[activeTask.executionStage] ?? PHASE_META.thinking;
             const runningStep = activeTask.steps.find((s) => s.state === "running");
+            // Show momentum subtask when available, otherwise fall back to running step
+            const subtaskLabel = momentum.subtask || runningStep?.text || activeTask.label;
             return (
               <div className="p-3 border-b border-white/[0.04]" style={{ background: `linear-gradient(135deg, ${phase.color}08, transparent)` }}>
                 <div className="flex items-center gap-2.5">
                   <AgentLivenessIndicator active={true} size={26} stage={activeTask.executionStage} />
                   <div className="min-w-0 flex-1">
-                    <div
-                      className="text-[9px] uppercase tracking-[0.14em] font-bold select-none"
-                      style={{ color: phase.color }}
-                    >
-                      {phase.label}
+                    <div className="flex items-center gap-1.5">
+                      <div
+                        className="text-[9px] uppercase tracking-[0.14em] font-bold select-none"
+                        style={{ color: phase.color }}
+                      >
+                        {phase.label}
+                      </div>
+                      {activeTask.fileCount > 0 && (
+                        <span className="text-[8px] font-mono text-zinc-700 tabular-nums">
+                          {activeTask.fileCount}f
+                        </span>
+                      )}
                     </div>
                     <div className="text-[11px] text-zinc-400 truncate mt-[1px]">
-                      {runningStep?.text ?? activeTask.label}
+                      {subtaskLabel}
                     </div>
+                    {/* Momentum sub-line: shows current task continuity */}
+                    {momentum.currentTask && momentum.currentTask !== subtaskLabel && (
+                      <div className="text-[9px] text-zinc-600 truncate mt-0.5 font-mono">
+                        {momentum.currentTask}
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
             );
           }
+          // Idle — show session continuity if we've completed work before
+          const lastTask = [...feed].reverse().find((i): i is TaskCard => i.kind === "task" && i.state === "done");
           return (
             <div className="p-4 border-b border-white/[0.04]">
               <div className="flex items-center gap-2">
                 <span className="text-[9px] text-zinc-600 select-none">◈</span>
                 <div className="text-sm font-medium">Build Agent</div>
               </div>
-              <div className="text-xs text-zinc-600 mt-0.5 pl-4">Describe what to build or change</div>
+              {lastTask ? (
+                <div className="text-[10px] text-zinc-600 mt-0.5 pl-4 truncate">
+                  Last: {lastTask.label} · {lastTask.fileCount > 0 ? `${lastTask.fileCount} files` : "done"}
+                </div>
+              ) : (
+                <div className="text-xs text-zinc-600 mt-0.5 pl-4">Describe what to build or change</div>
+              )}
             </div>
           );
         })()}
@@ -1609,6 +1684,8 @@ export default function WorkspacePage({ params }: { params: { id: string } }) {
               </div>
             ) : item.kind === "narrative" ? (
               <AgentBubble key={item.id} msg={item} />
+            ) : item.kind === "thought" ? (
+              <ThoughtBlock key={item.id} data={item.data} defaultCollapsed={false} />
             ) : item.kind === "converse" ? (
               <ConverseAnswer key={item.id} msg={item} />
             ) : (
