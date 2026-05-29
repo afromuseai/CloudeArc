@@ -514,10 +514,83 @@ function hashStr(s: string): number {
   return h;
 }
 
+// ── NarrativeDeduplicationEngine (frontend) ───────────────────────────────────
+// Prevents repeated phrasing across thinking-phase messages within a session.
+// Simpler than the server-side version — just tracks recent starters and
+// provides variant rotation for the workspace UI.
+
+export class NarrativeDeduplicationEngine {
+  private usedStarts: string[] = [];
+  private lastVariantIdx: Record<string, number> = {};
+  private maxHistory = 10;
+
+  isDuplicate(text: string): boolean {
+    const start = text.slice(0, 28).toLowerCase();
+    return this.usedStarts.includes(start);
+  }
+
+  record(text: string) {
+    const start = text.slice(0, 28).toLowerCase();
+    if (!this.usedStarts.includes(start)) {
+      this.usedStarts.push(start);
+      if (this.usedStarts.length > this.maxHistory) this.usedStarts.shift();
+    }
+  }
+
+  // Pick a variant that wasn't used last time for this key.
+  // Guarantees rotation — never repeats the same index twice in a row.
+  pickNext<T>(variants: T[], key: string): T {
+    if (!variants.length) throw new Error("Empty variants array");
+    const last = this.lastVariantIdx[key] ?? -1;
+    // Prefer indices other than last; rotate deterministically
+    const nextIdx = (last + 1) % variants.length;
+    this.lastVariantIdx[key] = nextIdx;
+    return variants[nextIdx];
+  }
+
+  // Use when a fresh session starts (new prompt submitted)
+  reset() {
+    this.usedStarts = [];
+    // Keep lastVariantIdx so rotation continues across sessions
+  }
+}
+
+// ── DesignTasteTracker (frontend) ─────────────────────────────────────────────
+// Client-side aesthetic continuity tracker — generates taste-continuity
+// messages for thinking-phase transitions.
+
+export class DesignTasteTrackerFE {
+  private established: string[] = [];
+  private lastContinuityIdx = -1;
+
+  record(pattern: string) {
+    if (!this.established.includes(pattern)) this.established.push(pattern);
+  }
+
+  getContinuityHint(): string | null {
+    if (this.established.length < 2) return null;
+    const CONTINUITY = [
+      "Carrying the same visual rhythm through the remaining sections.",
+      "The spacing and type scale established earlier is propagating cleanly.",
+      "Aesthetic consistency is holding — no overrides needed downstream.",
+      "The visual system from earlier sections is making this faster.",
+    ];
+    this.lastContinuityIdx = (this.lastContinuityIdx + 1) % CONTINUITY.length;
+    return CONTINUITY[this.lastContinuityIdx];
+  }
+
+  reset() {
+    this.established = [];
+    this.lastContinuityIdx = -1;
+  }
+}
+
 // ── Singleton exports ─────────────────────────────────────────────────────────
 
 export const orchestrator = new AIOrchestrator();
 export const cadence      = new CadenceEngine();
 export const adaptive     = new AdaptiveExecutionEngine();
 export const bandwidth    = new CognitiveBandwidthManager();
+export const dedup        = new NarrativeDeduplicationEngine();
+export const tasteTracker = new DesignTasteTrackerFE();
 export { ExecutionEventBus };

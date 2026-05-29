@@ -22,6 +22,10 @@ import {
   getStrategicSummary,
   getPlanEvolution,
   hashStr,
+  ArchitecturalMemoryEngine,
+  NarrativeDeduplicationEngine,
+  DesignTasteTracker,
+  ConstraintMemoryLayer,
   type ThoughtBlock,
 } from "../lib/promptOrchestrator";
 
@@ -289,6 +293,7 @@ async function streamCodeGen(
   apiKey: string,
   sseRes: Response,
   logger: any,
+  onFileEmit?: (path: string, emitCount: number) => void,
 ): Promise<{ emitted: number; accumulated: string }> {
   const controller = new AbortController();
   const codeTimer = setTimeout(() => controller.abort(), CODE_TIMEOUT_MS);
@@ -318,6 +323,8 @@ async function streamCodeGen(
       sseSend(sseRes, "file", { type: "write_file", path, content });
       logger.info({ path, chars: content.length }, "Streamed file");
       emitted++;
+      // Callback fires after each file lands — enables mid-stream narrative injection
+      onFileEmit?.(path, emitted);
     }
   };
 
@@ -743,34 +750,71 @@ EXECUTION CHECKLIST — every item is required:
 □ All text is readable: correct contrast for each background color
 □ Real marketing copy: specific feature names, real-sounding testimonials, real prices — NO Lorem ipsum`;
 
+  // ── Per-request Persistent Intelligence engines ───────────────────────────
+  // Instantiated fresh per build — track design language, constraints,
+  // and established patterns so narrative can reference them naturally.
+  const memory      = new ArchitecturalMemoryEngine();
+  const dedup       = new NarrativeDeduplicationEngine();
+  const taste       = new DesignTasteTracker();
+  const constraints = new ConstraintMemoryLayer();
+
+  memory.inferFromContext(templateType, styleMode);
+  constraints.inferConstraints(templateType, allFiles.length);
+
   // ── Adaptive pre-build moment ─────────────────────────────────────────────
-  // Occasionally: reprioritize, detect drift, or self-correct before starting.
-  // These feel self-directed rather than scripted.
   {
     const seed = prompt.slice(0, 12) + templateType;
     const adaptiveRoll = Math.abs(hashStr(seed)) % 10;
+    let preBuildMsg: string | null = null;
 
-    if (adaptiveRoll === 0 && allFiles.length > 6) {
-      // Reprioritization: AI changes execution order
-      sseNarrative(res, getReprioritization(seed), "building");
-    } else if (adaptiveRoll === 1 && allFiles.length > 8) {
-      // Drift detection: AI notices inefficiency
-      sseNarrative(res, getDriftDetection(seed), "building");
-    } else if (adaptiveRoll === 2) {
-      // Self-correction: AI catches itself
-      sseNarrative(res, getSelfCorrection(seed), "building");
-    } else if (adaptiveRoll >= 7 && allFiles.length > 5) {
-      // Multi-thread cognition: AI is aware of parallel concerns
-      sseNarrative(res, getMultiThread(seed), "building");
+    if (adaptiveRoll === 0 && allFiles.length > 6)      preBuildMsg = getReprioritization(seed);
+    else if (adaptiveRoll === 1 && allFiles.length > 8)  preBuildMsg = getDriftDetection(seed);
+    else if (adaptiveRoll === 2)                         preBuildMsg = getSelfCorrection(seed);
+    else if (adaptiveRoll >= 7 && allFiles.length > 5)  preBuildMsg = getMultiThread(seed);
+    // Otherwise: silent start
+
+    if (preBuildMsg && !dedup.isDuplicate(preBuildMsg)) {
+      sseNarrative(res, preBuildMsg, "building");
+      dedup.record(preBuildMsg);
     }
-    // Otherwise: silent start — restraint is also realism
   }
+
+  // ── Mid-stream injection: fires on every file emit ───────────────────────
+  // Only narrates every N files to maintain restraint.
+  const narrateEvery = allFiles.length > 10 ? 3 : 2;
+
+  const onFileEmit = (path: string, emitCount: number) => {
+    memory.recordFileEmit(path);
+    const componentName = path.split("/").pop()?.replace(".jsx", "") ?? "section";
+    taste.recordEstablished(componentName);
+
+    // Throttle: only narrate every N files
+    if (emitCount % narrateEvery !== 0) return;
+
+    // Priority chain — emit the first non-duplicate message found
+    const candidates: (string | null)[] = [
+      memory.getMemoryReference(path, emitCount),
+      taste.getContinuityMessage(emitCount, componentName),
+      constraints.getConstraintReference(emitCount, componentName),
+      memory.getRetrospectiveMessage(emitCount),
+      memory.getLongHorizonMessage(emitCount, templateType),
+    ];
+
+    for (const msg of candidates) {
+      if (msg && !dedup.isDuplicate(msg)) {
+        sseNarrative(res, msg, "building");
+        dedup.record(msg);
+        return;
+      }
+    }
+    // Nothing fired — silent. Restraint is intentional.
+  };
 
   let streamEmitted = 0;
   let accumulated = "";
 
   try {
-    const result = await streamCodeGen(codeSystemPrompt, userCodePrompt, apiKey, res, log);
+    const result = await streamCodeGen(codeSystemPrompt, userCodePrompt, apiKey, res, log, onFileEmit);
     streamEmitted = result.emitted;
     accumulated = result.accumulated;
   } catch (err: any) {

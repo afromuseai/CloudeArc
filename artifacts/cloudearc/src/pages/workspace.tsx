@@ -4,7 +4,7 @@ import { useLocation } from "wouter";
 import { AgentLivenessIndicator, type ExecutionStage } from "../components/AgentLivenessIndicator";
 import { ThoughtBlock, type ThoughtBlockData } from "../components/ThoughtBlock";
 import { DiffPreview } from "../components/DiffPreview";
-import { orchestrator } from "../lib/orchestrator";
+import { orchestrator, dedup, tasteTracker } from "../lib/orchestrator";
 import debounce from "lodash/debounce";
 import { zipSync, strToU8 } from "fflate";
 import {
@@ -1031,7 +1031,7 @@ export default function WorkspacePage({ params }: { params: { id: string } }) {
       "Reading through what's there before touching anything.",
       "Let me see where this fits into the existing layout.",
     ];
-    const s1 = addStep(taskId, editOpenings[Date.now() % editOpenings.length]);
+    const s1 = addStep(taskId, dedup.pickNext(editOpenings, "editOpeners"));
 
     const t1 = setTimeout(() => {
       resolveStep(taskId, s1, "done");
@@ -1040,7 +1040,7 @@ export default function WorkspacePage({ params }: { params: { id: string } }) {
         "The change is more localized than I expected. Good.",
         "Identified the right entry point — keeping this surgical.",
       ];
-      addStep(taskId, found[Date.now() % found.length]);
+      addStep(taskId, dedup.pickNext(found, "editFound"));
     }, 1600 + Math.random() * 600);
 
     const t2 = setTimeout(() => {
@@ -1064,7 +1064,7 @@ export default function WorkspacePage({ params }: { params: { id: string } }) {
       "Let me follow the state flow and see where it becomes inconsistent.",
       "I'm checking whether this is a structural issue or a surface one.",
     ];
-    const s1 = addStep(taskId, debugOpenings[Date.now() % debugOpenings.length]);
+    const s1 = addStep(taskId, dedup.pickNext(debugOpenings, "debugOpeners"));
 
     // Irregular timing — debugging doesn't have a clean rhythm
     const t1 = setTimeout(() => {
@@ -1074,7 +1074,7 @@ export default function WorkspacePage({ params }: { params: { id: string } }) {
         "Found something — the component structure is creating the inconsistency.",
         "I see it. The issue is earlier in the chain than it appears.",
       ];
-      addStep(taskId, discoveries[Date.now() % discoveries.length]);
+      addStep(taskId, dedup.pickNext(discoveries, "debugDiscoveries"));
     }, 2200 + Math.random() * 900);
 
     const t2 = setTimeout(() => {
@@ -1119,7 +1119,7 @@ export default function WorkspacePage({ params }: { params: { id: string } }) {
           `Good — the architecture settled quickly. I know exactly how these sections connect.`,
           `The ${what} shape resolved cleanly. I'm mapping the files now.`,
         ];
-        addStep(taskId, silentReturns[seed % silentReturns.length]);
+        addStep(taskId, dedup.pickNext(silentReturns, "silentReturn"));
       }, 5800 + Math.random() * 1000);
 
       const t2 = setTimeout(() => {
@@ -1172,26 +1172,25 @@ export default function WorkspacePage({ params }: { params: { id: string } }) {
       `Thinking through the dependencies before touching any files.`,
       `The ${what} structure needs to land right up front — it shapes everything downstream.`,
     ];
-    const s1 = addStep(taskId, planOpeners[seed % planOpeners.length]);
+    const s1 = addStep(taskId, dedup.pickNext(planOpeners, "planOpeners"));
 
     const t1 = setTimeout(() => {
       resolveStep(taskId, s1, "done");
 
       if (useSelfCorrection) {
-        // Self-correction: AI catches itself and revises — creates awareness feeling
         const selfCorrections = [
           `Actually — there's a cleaner way to structure the ${what}. Revising the approach.`,
           `I'm changing approach slightly. The initial plan becomes harder to maintain at this scope.`,
           `I noticed a better component split. Adjusting before going deeper.`,
         ];
-        addStep(taskId, selfCorrections[seed % selfCorrections.length]);
+        addStep(taskId, dedup.pickNext(selfCorrections, "selfCorrections"));
       } else {
         const planProgress = [
           `The layout structure is becoming clear — I know the component order I want.`,
           `Good — the architecture is settling. I know how these sections connect.`,
           `The ${what} shape is clearer now. Starting to map the files.`,
         ];
-        addStep(taskId, planProgress[seed % planProgress.length]);
+        addStep(taskId, dedup.pickNext(planProgress, "planProgress"));
       }
     }, 3200 + Math.random() * 600);
 
@@ -1325,6 +1324,11 @@ export default function WorkspacePage({ params }: { params: { id: string } }) {
     setSending(true);
     stopThinkTimers();
     debouncedWrite.cancel();
+
+    // Reset session-scoped deduplication + taste tracker on each new build.
+    // This ensures thinking-phase messages rotate cleanly across consecutive prompts.
+    dedup.reset();
+    tasteTracker.reset();
 
     const userBubble: UserBubble = { kind: "user", id: uid(), content: userPrompt };
     emitChatMessage({ kind: "user", content: userPrompt, id: userBubble.id });

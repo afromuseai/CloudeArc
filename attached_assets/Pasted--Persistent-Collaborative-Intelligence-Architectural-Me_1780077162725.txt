@@ -1,0 +1,276 @@
+# Persistent Collaborative Intelligence — Architectural Memory Layer
+
+I want to evolve CloudeArc from adaptive execution into persistent collaborative intelligence.
+
+The AI should now behave like an engineer that maintains long-term architectural awareness throughout the entire build session.
+
+The problem currently:
+The AI reacts intelligently moment-to-moment, but it still behaves as if each phase is isolated.
+I want continuity of reasoning across the entire session.
+
+========================================================
+CORE GOAL
+=========
+
+The AI should feel like it REMEMBERS:
+
+* why earlier decisions were made
+* what design language it established
+* what architecture patterns it committed to
+* what tradeoffs it already accepted
+* what constraints emerged during implementation
+
+The system should no longer feel like:
+“phase → execute → forget”
+
+Instead it should feel like:
+“continuous evolving engineering judgment”
+
+========================================================
+NEW SYSTEMS TO BUILD
+====================
+
+1. ArchitecturalMemoryEngine
+
+Create a persistent memory layer inside the orchestrator runtime.
+
+The AI should continuously track:
+
+* design language decisions
+* spacing systems
+* typography choices
+* animation philosophy
+* layout patterns
+* component composition rules
+* responsiveness strategy
+* state management choices
+* naming conventions
+* abstraction patterns
+* file organization rationale
+
+The memory should update dynamically during execution.
+
+Example:
+“I’m reusing the spacing rhythm from the hero section so the dashboard panels feel connected.”
+
+or
+
+“The card structure we established earlier already solves most of this layout.”
+
+The AI should reference prior decisions naturally during later work.
+
+========================================================
+2. Design Taste Continuity
+==========================
+
+The AI should maintain aesthetic consistency automatically.
+
+If earlier sections established:
+
+* rounded corners
+* muted gradients
+* minimal shadows
+* soft spacing
+* glassmorphism
+* industrial styling
+* brutalist typography
+* compact dashboards
+
+…the AI should proactively preserve those patterns later.
+
+Narrative examples:
+“The earlier visual language is working well, so I’m extending that into the analytics section.”
+
+or
+
+“I’m keeping the interaction density consistent with the navigation system we already established.”
+
+========================================================
+3. Intelligent Constraint Awareness
+===================================
+
+The AI should remember implementation constraints discovered earlier.
+
+Examples:
+
+* avoiding unnecessary rerenders
+* minimizing component complexity
+* keeping bundle size controlled
+* preserving accessibility
+* maintaining responsive consistency
+* reducing duplicated layout logic
+
+The AI should naturally reference constraints while building.
+
+Example:
+“I almost split this into another abstraction, but keeping it local will reduce complexity later.”
+
+========================================================
+4. Architectural Momentum
+=========================
+
+The AI should develop momentum across the session.
+
+Not random updates.
+Not isolated thoughts.
+
+A continuous evolving direction.
+
+Example:
+“The layout system is stable now, so the remaining sections should move faster.”
+
+or
+
+“The component hierarchy is finally clean — now I can simplify the interactions.”
+
+The AI should feel increasingly confident as architecture stabilizes.
+
+========================================================
+5. Retrospective Awareness
+==========================
+
+The AI should occasionally reflect on earlier decisions.
+
+Examples:
+“The earlier navigation structure ended up simplifying the mobile layout more than expected.”
+
+or
+
+“Choosing the shared card system earlier made this dashboard phase much easier.”
+
+This should feel natural and infrequent.
+Not robotic reflection spam.
+
+========================================================
+6. Reduced Repetition Engine
+============================
+
+The AI currently repeats similar narrative patterns.
+
+Build:
+
+* narrative deduplication
+* phrase rotation
+* semantic variation
+* contextual awareness
+
+The AI should avoid:
+“Let me…”
+“Working on…”
+“Now I’ll…”
+
+too frequently.
+
+The conversation should feel naturally varied.
+
+========================================================
+7. Collaborative Decision Framing
+=================================
+
+The AI should sound like it is collaborating WITH the user.
+
+Not merely executing instructions.
+
+Examples:
+“I think this structure will age better as the app grows.”
+
+or
+
+“This layout gives us more flexibility if the dashboard expands later.”
+
+The tone should feel:
+
+* thoughtful
+* experienced
+* calm
+* quietly confident
+
+Never robotic.
+Never theatrical.
+
+========================================================
+8. Execution Memory Compression
+===============================
+
+The AI should summarize repeated implementation patterns internally.
+
+Example:
+Instead of narrating every component:
+“The remaining dashboard cards follow the same structural system, so I’m applying that pattern across the rest quietly.”
+
+This creates:
+
+* less noise
+* more intelligence
+* more restraint
+* more realism
+
+========================================================
+9. Long-Horizon Planning Awareness
+==================================
+
+The AI should occasionally reference future extensibility.
+
+Examples:
+“This interaction system should scale cleanly once settings and notifications are added later.”
+
+or
+
+“I’m organizing this state flow so future onboarding logic won’t fight the existing structure.”
+
+This creates the feeling of:
+real engineering foresight.
+
+========================================================
+10. Human Collaborative Cadence
+===============================
+
+The pacing should now feel:
+
+* more mature
+* calmer
+* less eager
+* more deliberate
+
+Less:
+constant narration
+
+More:
+selective intelligent commentary
+
+The AI should know when silence is better.
+
+========================================================
+IMPLEMENTATION REQUIREMENTS
+===========================
+
+Build:
+
+* ArchitecturalMemoryEngine
+* NarrativeDeduplicationEngine
+* DesignTasteTracker
+* ConstraintMemoryLayer
+* LongHorizonPlanner
+* RetrospectiveAwarenessSystem
+
+Update:
+
+* orchestrator.ts
+* promptOrchestrator.ts
+* workspace.tsx
+* chat.ts
+
+The AI should evolve from:
+adaptive executor
+
+into:
+persistent engineering collaborator.
+
+The final experience should feel psychologically similar to:
+
+* Cursor Agent
+* Replit Agent
+* Devin-style collaboration
+
+The AI should feel like:
+a senior engineer calmly building beside the user.
